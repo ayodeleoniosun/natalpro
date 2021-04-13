@@ -15,14 +15,14 @@ abstract class VaccinationInterval
     public const TWO_YEARS = 'two_years';
 
     public const VACCINATION_INTERVALS = [
-        'at_birth',
-        'six_weeks',
-        'ten_weeks',
-        'fourteen_weeks',
-        'nine_months',
-        'twelve_months',
-        'fifteen_months',
-        'eighteen_months',
-        'two_years'
+        self::AT_BIRTH,
+        self::SIX_WEEKS,
+        self::TEN_WEEKS,
+        self::FOURTEEN_WEEKS,
+        self::NINE_MONTHS,
+        self::TWELVE_MONTHS,
+        self::FIFTEEN_MONTHS,
+        self::EIGHTEEN_MONTHS,
+        self::TWO_YEARS
     ];
 }
