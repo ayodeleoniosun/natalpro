@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\V1\Enum\VaccinationInterval;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,8 +14,8 @@ class CreateVaccinationCycleTable extends Migration
      */
     public function up()
     {
-        $vaccination_intervals = ['at_birth', '6_weeks', '10_weeks', '14_weeks', '6_months', '9_months', '12_months', '15_months', '18_months', '2_years'];
-
+        $vaccination_intervals = VaccinationInterval::VACCINATION_INTERVALS;
+        
         Schema::create('vaccination_cycle', function (Blueprint $table) use ($vaccination_intervals) {
             $table->increments('id');
             $table->unsignedInteger('vaccination_request_id');

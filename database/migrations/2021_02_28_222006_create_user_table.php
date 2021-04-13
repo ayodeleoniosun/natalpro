@@ -19,6 +19,7 @@ class CreateUserTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email_address')->unique();
+            $table->boolean('is_email_generated')->default(false);
             $table->string('phone_number');
             $table->string('password');
             $table->string('bearer_token');

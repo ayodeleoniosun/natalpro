@@ -3,8 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Modules\Api\V1\Models\State;
-use App\Modules\Api\V1\Models\City;
+use App\Modules\V1\Models\State;
+use App\Modules\V1\Models\City;
 
 class CreateCityTable extends Migration
 {
