@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Api\V1\Models;
+namespace App\Modules\V1\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +9,8 @@ class VaccinationSms extends Model
 {
     use HasFactory;
     
+    protected $table = 'vaccination_sms';
+
     public function vaccinationRequest()
     {
         return $this->belongsTo(VaccinationRequest::class, 'vaccination_request_id');

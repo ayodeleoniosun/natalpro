@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Api\V1\Models;
+namespace App\Modules\V1\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticable;
@@ -11,10 +11,14 @@ class User extends Authenticable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
+    protected $table = 'user';
+    
     protected $hidden = [
         'password',
         'token_expires_at'
     ];
+
+    protected $fillable = ['first_name', 'last_name', 'email_address', 'phone_number', 'password'];
 
     public function fullname()
     {
