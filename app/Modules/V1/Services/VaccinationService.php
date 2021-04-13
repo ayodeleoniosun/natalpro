@@ -63,45 +63,55 @@ class VaccinationService implements VaccinationRepository
             ];
         }
         
-        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        if (!$user) {
-            $user = (new UserService)->signUp([
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'phone_number' => $data['phone_number'],
-                'email_address' => $email_address,
-                'password' => bcrypt($email_address),
-                'is_email_generated' => $is_email_generated
-            ]);
+            if (!$user) {
+                $user = (new UserService)->signUp([
+                    'first_name' => $data['first_name'],
+                    'last_name' => $data['last_name'],
+                    'phone_number' => $data['phone_number'],
+                    'email_address' => $email_address,
+                    'password' => bcrypt($email_address),
+                    'is_email_generated' => $is_email_generated
+                ]);
+            }
+
+            if ($user) {
+                $vaccination_request_id = VaccinationRequest::GenerateRequestId(6);
+                
+                $vaccination_request = VaccinationRequest::create([
+                    'request_id' => $vaccination_request_id,
+                    'user_id' => $user->id,
+                    'mother' => strtolower($data['mother']),
+                    'child' => strtolower($data['child']),
+                    'dob' => $data['dob'],
+                    'gender' => strtolower($data['gender']),
+                    'amount' => strtolower($data['amount'])
+                ]);
+
+                VaccinationRequest::generateVaccinationCycles($vaccination_request);
+
+                $setting = Setting::orderBy('id')->limit(1)->first();
+                $status = SmsHandler::SendSms($user->phone_number, $setting->welcome_message);
+                Log::info("Vaccination Welcome SMS: " . $status);
+            }
+
+            DB::commit();
+
+            return [
+                'status' => 'success',
+                'label' => 'success',
+                'message' => 'Vaccination request successfully added.'
+            ];
+        } catch (\Exception $e) {
+            Log::error('Registering vaccination request =>' . $e);
+            DB::rollback();
+            return [
+                'status' => 'error',
+                'label' => 'danger',
+                'message' => 'Error occurred while registering vaccination request.'
+            ];
         }
-
-        if ($user) {
-            $vaccination_request_id = VaccinationRequest::GenerateRequestId(6);
-            
-            $vaccination_request = VaccinationRequest::create([
-                'request_id' => $vaccination_request_id,
-                'user_id' => $user->id,
-                'mother' => strtolower($data['mother']),
-                'child' => strtolower($data['child']),
-                'dob' => $data['dob'],
-                'gender' => strtolower($data['gender']),
-                'amount' => strtolower($data['amount'])
-            ]);
-
-            VaccinationRequest::generateVaccinationCycles($vaccination_request);
-
-            $setting = Setting::orderBy('id')->limit(1)->first();
-            $status = VaccinationRequest::SendSms('NatalPro', $user->phone_number, $setting->welcome_message);
-            Log::info("Vaccination Welcome SMS: " . $status);
-        }
-
-        DB::commit();
-
-        return [
-            'status' => 'success',
-            'label' => 'success',
-            'message' => 'Vaccination request successfully added.'
-        ];
     }
 }
