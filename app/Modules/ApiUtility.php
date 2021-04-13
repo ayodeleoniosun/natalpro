@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\Api;
+namespace App\Modules;
 
 use App\Exceptions\CustomApiErrorResponseHandler;
-use App\Modules\Api\V1\Models\ActiveStatus;
-use App\Modules\Api\V1\Models\User;
+use App\Modules\V1\Models\ActiveStatus;
+use App\Modules\V1\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
@@ -79,5 +79,27 @@ class ApiUtility
         $date = $currentTime->toArray();
         $timeStamp = $date['year']."_".date("m")."_".date("d")."_".$date['micro'];
         return $timeStamp;
+    }
+
+    public static function phoneNumberToDBFormat($phone_number)
+    {
+        $phone_number = preg_replace('/[^0-9]/', '', $phone_number);
+
+        if ($phone_number) {
+            if (substr($phone_number, 0, 1) == '0') {
+                $phone_number = '234' . substr($phone_number, 1);
+            } elseif (substr($phone_number, 0, 1) == '7' || substr($phone_number, 0, 1) == '8' || substr($phone_number, 0, 1) == '9') {
+                $phone_number = '234' . $phone_number;
+            }
+        }
+        return $phone_number;
+    }
+
+    public static function phoneNumberFromDBFormat($phone_number)
+    {
+        if ($phone_number && substr($phone_number, 0, 3) == '234') {
+            $phone_number = '0' . substr($phone_number, 3);
+        }
+        return $phone_number;
     }
 }

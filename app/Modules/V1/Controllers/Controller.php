@@ -1,5 +1,5 @@
 <?php
-namespace App\Modules\Api\V1\Controllers;
+namespace App\Modules\V1\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;

@@ -177,8 +177,7 @@ return [
 
         //Repository Providers
         App\Providers\V1\UserServiceProvider::class,
-        App\Providers\V1\CategoryServiceProvider::class,
-        App\Providers\V1\AdsServiceProvider::class,
+        App\Providers\V1\VaccinationServiceProvider::class
     ],
 
     /*

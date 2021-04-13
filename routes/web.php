@@ -17,12 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::group(
     [
         'prefix' => 'v1',
-        'namespace' => 'App\Modules\Api\V1\Controllers'
+        'namespace' => 'App\Modules\V1\Controllers'
     ],
     function () {
         Route::group(
             ['prefix' => 'vaccination'],
             function () {
+                Route::get('/', 'VaccinationController@add')->name('vaccination.add');
                 Route::post('/request', 'VaccinationController@request')->name('vaccination.request');
             }
         );
