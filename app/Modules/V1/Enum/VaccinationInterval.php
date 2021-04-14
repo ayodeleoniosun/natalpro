@@ -8,6 +8,7 @@ abstract class VaccinationInterval
     public const SIX_WEEKS = 'six_weeks';
     public const TEN_WEEKS = 'ten_weeks';
     public const FOURTEEN_WEEKS = 'fourteen_weeks';
+    public const SIX_MONTHS = 'six_months';
     public const NINE_MONTHS = 'nine_months';
     public const TWELVE_MONTHS = 'twelve_months';
     public const FIFTEEN_MONTHS = 'fifteen_months';
@@ -19,6 +20,7 @@ abstract class VaccinationInterval
         self::SIX_WEEKS,
         self::TEN_WEEKS,
         self::FOURTEEN_WEEKS,
+        self::SIX_MONTHS,
         self::NINE_MONTHS,
         self::TWELVE_MONTHS,
         self::FIFTEEN_MONTHS,

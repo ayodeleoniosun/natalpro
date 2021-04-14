@@ -23,6 +23,7 @@ class VaccinationControllerTest extends TestCase
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'phone_number' => '',
+            'language' => 'english',
             'mother' => 'Mummy Christy',
             'child' => 'christy',
             'dob' => '2021-04-12',
@@ -44,6 +45,7 @@ class VaccinationControllerTest extends TestCase
             'phone_number' => '08132016744',
             'mother' => 'Mummy Christy',
             'child' => 'christy',
+            'language' => 'yoruba',
             'dob' => '2021-04-12',
             'gender' => 'male',
             'amount' => '2000'

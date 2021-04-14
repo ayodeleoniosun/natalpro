@@ -4,6 +4,7 @@ namespace App\Modules\V1\Services;
 
 use App\Handlers\SmsHandler;
 use App\Modules\ApiUtility;
+use App\Modules\V1\Enum\VaccinationInterval;
 use App\Modules\V1\Models\ActiveStatus;
 use App\Modules\V1\Models\Setting;
 use App\Modules\V1\Models\User;
@@ -86,15 +87,26 @@ class VaccinationService implements VaccinationRepository
                     'mother' => strtolower($data['mother']),
                     'child' => strtolower($data['child']),
                     'dob' => $data['dob'],
+                    'language' => strtolower($data['language']),
                     'gender' => strtolower($data['gender']),
                     'amount' => strtolower($data['amount'])
                 ]);
 
                 VaccinationRequest::generateVaccinationCycles($vaccination_request);
 
-                $setting = Setting::orderBy('id')->limit(1)->first();
-                $status = SmsHandler::SendSms($user->phone_number, $setting->welcome_message);
+                $welcome_message = VaccinationSmsSample::where([
+                    'language' => $vaccination_request->language,
+                    'interval' => VaccinationInterval::AT_BIRTH,
+                    'active_status' => ActiveStatus::ACTIVE
+                ])->value('sms');
+
+                $status = SmsHandler::SendSms($user->phone_number, $welcome_message);
                 Log::info("Vaccination Welcome SMS: " . $status);
+
+                VaccinationSmsSample::where([
+                    'vaccination_request_id' => $vaccination_request->id,
+                    'interval' => VaccinationInterval::AT_BIRTH,
+                ])->update(['active_status' => ActiveStatus::DEACTIVATED]);
             }
 
             DB::commit();

@@ -25,6 +25,7 @@ class VaccinationCycle extends Model
         VaccinationInterval::SIX_WEEKS => '6 weeks',
         VaccinationInterval::TEN_WEEKS => '10 weeks',
         VaccinationInterval::FOURTEEN_WEEKS => '14 weeks',
+        VaccinationInterval::SIX_MONTHS => '6 months',
         VaccinationInterval::NINE_MONTHS => '9 months',
         VaccinationInterval::TWELVE_MONTHS => '12 months',
         VaccinationInterval::FIFTEEN_MONTHS => '15 months',

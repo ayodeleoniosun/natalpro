@@ -19,6 +19,7 @@ class VaccinationRequest extends Model
         'mother',
         'child',
         'dob',
+        'language',
         'gender',
         'amount'
     ];
@@ -69,6 +70,10 @@ class VaccinationRequest extends Model
                 $vaccination_date = Carbon::parse($vaccination_request->dob)->addWeeks(14)->toDateString();
                 break;
 
+            case VaccinationInterval::SIX_MONTHS:
+                $vaccination_date = Carbon::parse($vaccination_request->dob)->addMonths(6)->toDateString();
+                break;
+
             case VaccinationInterval::NINE_MONTHS:
                 $vaccination_date = Carbon::parse($vaccination_request->dob)->addMonths(9)->toDateString();
                 break;
@@ -112,31 +117,6 @@ class VaccinationRequest extends Model
 
         foreach ($vaccination_intervals as $interval) {
             VaccinationCycle::create(self::generateCycles($interval, $vaccination_request));
-        }
-    }
-
-    public static function SendSms($sender, $recipient, $message)
-    {
-        $client = new \GuzzleHttp\Client();
-        $message = urlencode($message);
-        $senderid = urlencode($sender);
-        $to = $recipient;
-        $token = 'qczmEvQOju2v3MDuEIrAHclCG3om1WMN43rJJZPoMjjxZnyre0avGUwEWh8OWora18t1wghhIdZLL2oQEL4zKcqATTnwZBTCBW6Z';
-        $routing = 3;
-        $type = 0;
-        $baseurl = 'https://smartsmssolutions.com/api/json.php?';
-        $url = $baseurl.'message='.$message.'&to='.$to.'&sender='.$sender.'&type='.$type.'&routing='.$routing.'&token='.$token;
-        
-        $response = $client->request('GET', $url);
-        $body = $response->getBody();
-        $str = $body->getContents();
-        $content = "$str";
-        $decode_response = json_decode($content, true);
-        
-        if ($decode_response['code'] == 1000) {
-            return 1;
-        } else {
-            return 2;
         }
     }
 }

@@ -18,6 +18,7 @@ class ActiveStatus extends Model
     const PENDING = 2;
     const DELETED = 3;
     const SUSPENDED = 4;
+    const DEACTIVATED = 5;
 
     public static function symbols($status = null)
     {
@@ -26,6 +27,7 @@ class ActiveStatus extends Model
             static::PENDING => ['color' => 'bg-slate', 'label' => 'Pending'],
             static::DELETED => ['color' => 'btn-danger', 'label' => 'Deleted'],
             static::SUSPENDED => ['color' => 'btn-warning', 'label' => 'Suspended'],
+            static::DEACTIVATED => ['color' => 'btn-warning', 'label' => 'Deactivated'],
         ];
 
         return ($status) ? data_get($symbols, $status) : $symbols;
@@ -42,6 +44,8 @@ class ActiveStatus extends Model
                 return 'Deleted';
             case static::SUSPENDED:
                 return 'Suspended';
+            case static::DEACTIVATED:
+                return 'Deactivated';
             default:
                 return '';
         }

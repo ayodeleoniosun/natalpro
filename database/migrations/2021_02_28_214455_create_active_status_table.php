@@ -20,7 +20,7 @@ class CreateActiveStatusTable extends Migration
             $table->timestamps();
         });
 
-        $active_statuses = ['Active', 'Pending', 'Deleted', 'Suspended'];
+        $active_statuses = ['Active', 'Pending', 'Deleted', 'Suspended', 'Deactivated'];
         
         foreach ($active_statuses as $status) {
             ActiveStatus::create(['name' => $status]);

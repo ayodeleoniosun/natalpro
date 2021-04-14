@@ -11,6 +11,8 @@ class VaccinationSmsSample extends Model
     
     protected $table = 'vaccination_sms_sample';
 
+    protected $fillable = ['interval', 'language', 'sms'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

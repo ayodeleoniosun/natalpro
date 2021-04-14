@@ -6,7 +6,7 @@ class SmsHandler
 {
     public const BASE_URL = 'https://smartsmssolutions.com/api/json.php?';
     public const SENDER_NAME = 'NatalPro';
-    public const ROUTING = 3;
+    public const ROUTING = 4;
     public const TYPE = 0;
     public const TOKEN = 'qczmEvQOju2v3MDuEIrAHclCG3om1WMN43rJJZPoMjjxZnyre0avGUwEWh8OWora18t1wghhIdZLL2oQEL4zKcqATTnwZBTCBW6Z';
     public const SUCCESS_CODE = 1000;

@@ -44,6 +44,7 @@ class VaccinationController extends Controller
                 'child' => 'required|string',
                 'dob' => 'required|string',
                 'gender' => 'required|string',
+                'language' => 'required|string',
                 'amount' => 'required|string',
             ],
             [
@@ -53,6 +54,7 @@ class VaccinationController extends Controller
                 'mother.required' => 'Mother\'s name is required',
                 'child.required' => 'Child\'s name is required',
                 'dob.required' => 'Child\'s date of birth name is required',
+                'language.required' => 'Kindly select the language you want SMS to be sent with',
                 'gender.required' => 'Child\'s gender is required',
                 'amount.required' => 'Amount field is required',
             ]
