@@ -292,9 +292,14 @@ ajaxFormRequest = (btn_id,form,url,data_type,the_status,btn_title,file_upload) =
                 {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                success:function(msg) {
+                success:function(response) {
                     status.fadeIn("fast");
-                    status.html(msg);
+                    if (response.status == 'success') {
+                        $(form).trigger("reset");
+                        status.html("<p class='text-success'>"+response.message+"</p>");
+                    } else {
+                        status.html("<p class='text-danger'>"+response.message+"</p>");
+                    }
                     btn.attr("disabled",false);
                     btn.html(btn_title);
                 },

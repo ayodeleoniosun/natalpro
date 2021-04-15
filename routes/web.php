@@ -15,10 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(
-    [
-        'prefix' => 'v1',
-        'namespace' => 'App\Modules\V1\Controllers'
-    ],
+    ['namespace' => 'App\Modules\V1\Controllers'],
     function () {
         Route::group(
             ['prefix' => 'vaccination'],
