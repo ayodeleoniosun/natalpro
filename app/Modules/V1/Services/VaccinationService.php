@@ -10,18 +10,40 @@ use App\Modules\V1\Models\Setting;
 use App\Modules\V1\Models\User;
 use App\Modules\V1\Models\VaccinationCycle;
 use App\Modules\V1\Models\VaccinationRequest;
-use App\Modules\V1\Models\VaccinationSms;
 use App\Modules\V1\Models\VaccinationSmsSample;
 use Illuminate\Support\Facades\Log;
 use App\Modules\V1\Repositories\VaccinationRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class VaccinationService implements VaccinationRepository
 {
     public function index()
     {
+        $vaccinations = VaccinationRequest::orderBy('id', 'DESC')->get();
+        
+        return $vaccinations->map(function ($vaccination) {
+            return VaccinationRequest::resource($vaccination);
+        });
+    }
+
+    public function show($id)
+    {
+        $vaccination = VaccinationRequest::find($id);
+        
+        if (!$vaccination) {
+            return [
+                'status' => 'error',
+                'message' => 'Vaccination request not found'
+            ];
+        }
+        
+        $vaccination = VaccinationRequest::resource($vaccination);
+
+        return [
+            'status' => 'success',
+            'vaccination' => $vaccination
+        ];
     }
 
     public function request(array $data)
@@ -63,6 +85,19 @@ class VaccinationService implements VaccinationRepository
                 'message' => 'User with this email address exist. Kindly use a different email address'
             ];
         }
+
+        $phone_number_exists = User::where([
+            'phone_number' => ApiUtility::phoneNumberToDBFormat($data['phone_number']),
+            'active_status' => ActiveStatus::ACTIVE
+        ])->exists();
+
+        if ($phone_number_exists) {
+            return [
+                'status' => 'error',
+                'label' => 'danger',
+                'message' => 'User with this phone number exist. Kindly use a different phone number'
+            ];
+        }
         
         try {
             DB::beginTransaction();
@@ -73,14 +108,15 @@ class VaccinationService implements VaccinationRepository
                     'last_name' => $data['last_name'],
                     'phone_number' => $data['phone_number'],
                     'email_address' => $email_address,
-                    'password' => bcrypt($email_address),
+                    'password' => $email_address,
                     'is_email_generated' => $is_email_generated
                 ]);
             }
 
             if ($user) {
                 $vaccination_request_id = VaccinationRequest::GenerateRequestId(6);
-                
+                $vaccination_amount = Setting::where('id', 1)->value('vaccination_amount');
+
                 $vaccination_request = VaccinationRequest::create([
                     'request_id' => $vaccination_request_id,
                     'user_id' => $user->id,
@@ -89,7 +125,7 @@ class VaccinationService implements VaccinationRepository
                     'dob' => $data['dob'],
                     'language' => strtolower($data['language']),
                     'gender' => strtolower($data['gender']),
-                    'amount' => strtolower($data['amount'])
+                    'amount' => $vaccination_amount
                 ]);
 
                 VaccinationRequest::generateVaccinationCycles($vaccination_request);
@@ -103,7 +139,7 @@ class VaccinationService implements VaccinationRepository
                 $status = SmsHandler::SendSms($user->phone_number, $welcome_message);
                 Log::info("Vaccination Welcome SMS: " . $status);
 
-                VaccinationSmsSample::where([
+                VaccinationCycle::where([
                     'vaccination_request_id' => $vaccination_request->id,
                     'interval' => VaccinationInterval::AT_BIRTH,
                 ])->update(['active_status' => ActiveStatus::DEACTIVATED]);

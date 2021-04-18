@@ -6,5 +6,7 @@ interface VaccinationRepository
 {
     public function index();
 
+    public function show(int $id);
+
     public function request(array $data);
 }

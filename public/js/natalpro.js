@@ -293,10 +293,11 @@ ajaxFormRequest = (btn_id,form,url,data_type,the_status,btn_title,file_upload) =
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(response) {
+                    console.log(response);
                     status.fadeIn("fast");
                     if (response.status == 'success') {
                         $(form).trigger("reset");
-                        status.html("<p class='text-success'>"+response.message+"</p>");
+                        status.html("<p style='color:green'>"+response.message+"</p>");
                     } else {
                         status.html("<p class='text-danger'>"+response.message+"</p>");
                     }

@@ -25,9 +25,23 @@ class VaccinationController extends Controller
         return redirect()->route('admin.vaccination.index')->with($response);
     }
 
+    public function show($id)
+    {
+        $response = $this->vaccinationRepository->show($id);
+        return redirect()->route('admin.vaccination.show')->with($response);
+    }
+
     public function add()
     {
-        return view('vaccination.add');
+        $languages = ['english', 'yoruba', 'igbo', 'hausa'];
+        $genders = ['male', 'female'];
+        
+        $data = [
+            'languages' => $languages,
+            'genders' => $genders
+        ];
+
+        return view('user.vaccination.add', $data);
     }
 
     public function request()
@@ -44,8 +58,7 @@ class VaccinationController extends Controller
                 'child' => 'required|string',
                 'dob' => 'required|string',
                 'gender' => 'required|string',
-                'language' => 'required|string',
-                'amount' => 'required|string',
+                'language' => 'required|string'
             ],
             [
                 'first_name.required' => 'First name is required',
@@ -53,10 +66,9 @@ class VaccinationController extends Controller
                 'phone_number.required' => 'Phone number is required',
                 'mother.required' => 'Mother\'s name is required',
                 'child.required' => 'Child\'s name is required',
-                'dob.required' => 'Child\'s date of birth name is required',
+                'dob.required' => 'Child\'s date of birth is required',
                 'language.required' => 'Kindly select the language you want SMS to be sent with',
-                'gender.required' => 'Child\'s gender is required',
-                'amount.required' => 'Amount field is required',
+                'gender.required' => 'Child\'s gender is required'
             ]
         );
 
@@ -70,11 +82,11 @@ class VaccinationController extends Controller
             }
         
             if (count($validation_errors) > 0) {
-                return redirect()->route('vaccination.add')->with('alert-'.$validation_errors['label'], $validation_errors['message']);
+                return $validation_errors;
             }
         }
 
         $response = $this->vaccinationRepository->request($body);
-        return redirect()->route('vaccination.add')->with('alert-'.$response['label'], $response['message']);
+        return $response;
     }
 }

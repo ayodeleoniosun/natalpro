@@ -29,7 +29,7 @@ class VaccinationRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function vaccinationCycle()
+    public function cycles()
     {
         return $this->hasMany(VaccinationCycle::class, 'vaccination_request_id');
     }
@@ -49,6 +49,44 @@ class VaccinationRequest extends Model
         $number_key2 = $new_number_string;
 
         return $number_key2;
+    }
+
+    public static function resource($vaccination)
+    {
+        $user = User::find($vaccination->user_id);
+        
+        return [
+            'id' => $vaccination->id,
+            'request_id' => $vaccination->request_id,
+            'user' => [
+                'fullname' => ucfirst($user->first_name." ".$user->last_name),
+                'email_address' => $user->email_address,
+                'phone_number' => $user->phone_number,
+            ],
+            'language' => ucfirst($vaccination->language),
+            'mother' => ucfirst($vaccination->mother),
+            'child' => ucfirst($vaccination->child),
+            'dob' => Carbon::parse($vaccination->dob)->format('F jS, Y'),
+            'gender' => ucfirst($vaccination->gender),
+            'amount' => $vaccination->amount,
+            'status' => ActiveStatus::find($vaccination->active_status)->name,
+            'created_at' => Carbon::parse($vaccination->created_at)->format('F jS, Y h:i A'),
+            'updated_at' => Carbon::parse($vaccination->updated_at)->format('F jS, Y, h:i A'),
+            'cycles' => self::resourceCycles($vaccination->cycles)
+        ];
+    }
+
+    public static function resourceCycles($cycles)
+    {
+        return $cycles->map(function ($cycle) {
+            $cycle->interval = VaccinationCycle::VACCINATION_CYCLES[$cycle->interval];
+            $cycle->vaccination_date = Carbon::parse($cycle->vaccination_date)->format('F jS, Y');
+            $cycle->week_before = Carbon::parse($cycle->week_before)->format('F jS, Y');
+            $cycle->day_before = Carbon::parse($cycle->day_before)->format('F jS, Y');
+            $cycle->active_status = ActiveStatus::find($cycle->active_status)->name;
+            
+            return $cycle;
+        });
     }
 
     public static function generateCycles($interval, $vaccination_request)
