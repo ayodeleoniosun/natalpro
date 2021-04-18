@@ -29,17 +29,23 @@ Route::group(
         Route::group(
             ['prefix' => 'admin'],
             function () {
+                Route::get('/', 'AdminController@index')->name('admin.index');
+                Route::get('/dashboard', 'AdminController@dashboard')->name('admin.dashboard');
                 Route::post('/', 'AdminController@login')->name('admin.login');
-                Route::get('/settings', 'AdminController@getSettings')->name('admin.settings.index');
+                Route::get('/settings', 'AdminController@settings')->name('admin.settings.index');
                 Route::post('/settings', 'AdminController@updateSettings')->name('admin.settings.update');
-                        
+                Route::get('/logout', 'AdminController@logout')->name('admin.logout');
+                
+                //users
+                Route::get('/users/{type?}', 'UserController@users')->name('admin.users.type');
+                
                 Route::group(
                     ['prefix' => 'vaccination'],
                     function () {
-                        Route::post('/', 'VaccinationController@index')->name('vaccination.index');
-                        Route::get('/sms-sample', 'VaccinationController@smsSample')->name('vaccination.sms-sample.index');
-                        Route::post('/sms-sample', 'VaccinationController@addSmsSample')->name('vaccination.sms-sample.add');
-                        Route::get('/{id}', 'VaccinationController@getVaccination')->name('vaccination.details')->where('id', '[0-9]+');
+                        Route::get('/', 'VaccinationController@index')->name('admin.vaccination.index');
+                        Route::get('/{id}', 'VaccinationController@show')->name('vaccination.show')->where('id', '[0-9]+');
+                        Route::get('/sms-sample', 'VaccinationController@smsSample')->name('admin.vaccination.sms-sample.index');
+                        Route::post('/sms-sample', 'VaccinationController@addSmsSample')->name('admin.vaccination.sms-sample.add');
                     }
                 );
             }

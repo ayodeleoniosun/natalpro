@@ -176,6 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         //Repository Providers
+        App\Providers\V1\AdminServiceProvider::class,
         App\Providers\V1\UserServiceProvider::class,
         App\Providers\V1\VaccinationServiceProvider::class
     ],

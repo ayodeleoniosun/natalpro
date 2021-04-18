@@ -51,7 +51,7 @@ class ApiUtility
         )->whereDate('token_expires_at', '>=', $now)->first();
         
         if (!$user) {
-            throw new CustomApiErrorResponseHandler("Unauthorized access.");
+            return redirect()->route('admin.login')->with('alert-danger', 'Please login below');
         }
 
         return $user;

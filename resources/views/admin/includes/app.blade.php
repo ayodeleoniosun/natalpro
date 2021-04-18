@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\Session;
         
         @yield("content")
 
-        <script src="{{ URL::asset('js/natalnurse.js') }}"></script>
+        <script src="{{ URL::asset('js/natalpro.js') }}"></script>
         <script src="{{ URL::asset('assets/plugins/bootstrap/js/popper.min.js') }}"></script>
         <script src="{{ URL::asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ URL::asset('js/jquery.slimscroll.js') }}"></script>
