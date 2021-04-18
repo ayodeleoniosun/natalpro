@@ -8,5 +8,9 @@ interface VaccinationRepository
 
     public function show(int $id);
 
+    public function smsSamples();
+
+    public function viewSmsSamples(string $interval);
+
     public function request(array $data);
 }

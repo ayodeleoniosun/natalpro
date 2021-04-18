@@ -5,7 +5,9 @@ namespace App\Modules\V1\Controllers;
 use App\Exceptions\CustomApiErrorResponseHandler;
 use App\Modules\ApiUtility;
 use App\Modules\V1\Repositories\AdminRepository;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
@@ -26,21 +28,27 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $response = $this->adminRepository->dashboard();
-        return view('admin.dashboard', $response);
+        return view('admin.dashboard', $this->adminRepository->dashboard());
     }
 
     public function login()
     {
-        $body = $this->request->all();
-        $response = $this->adminRepository->signIn($body);
-        return $response;
+        $response = $this->adminRepository->signIn($this->request->all());
+        
+        if ($response['status'] == 'success') {
+            // if ($this->request->session()->has('url')) {
+            //     return Redirect::to(session('url'));
+            // }
+            
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('admin.index')->with('alert-danger', $response['message']);
+        }
     }
 
     public function settings()
     {
-        $response = $this->adminRepository->settings();
-        return view('admin.settings', $response);
+        return view('admin.settings', $this->adminRepository->settings());
     }
 
     public function updateSettings()
@@ -75,8 +83,7 @@ class AdminController extends Controller
             }
         }
 
-        $response = $this->adminRepository->updateSettings($body);
-        return $response;
+        return $this->adminRepository->updateSettings($body);
     }
 
     public function changePassword()
@@ -105,5 +112,11 @@ class AdminController extends Controller
         }
 
         return response()->json(['status' => 'success', 'data' => $this->userRepository->changePassword($body)], 200);
+    }
+
+    public function logout()
+    {
+        $this->request->session()->forget('user');
+        return redirect()->route('admin.index');
     }
 }

@@ -23,9 +23,24 @@
                         <img src="{{ URL::asset('assets/images/logo-icon.png')}}" alt="homepage" class="dark-logo" class="img-responsive img-thumbnail"/>
                     </div>
                     <br/>
-                    <form class="form-horizontal" id="admin-login-form" action="#" method="post" onsubmit="return false">
+                    <form class="form-horizontal" action="{{ route('admin.login') }}" method="post">
                         {{csrf_field()}}
                         <h3 class="box-title m-b-20" align="center">Admin Login</h3>
+                        <div class="flash-message">
+                        @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                            @if(Session('alert-' . $msg))
+                                <div class="container">
+                                <div class="col-sm-12">
+                                    <div class="alert alert-{{ $msg }} alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    {{ Session('alert-' . $msg) }}
+                                    </div>
+                                </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    
                         <div class="form-group ">
                             <div class="col-xs-12">
                             <input class="form-control" type="email" name="email" required="" placeholder="Email address"> </div>
@@ -37,8 +52,7 @@
                         </div>
                         <div class="form-group text-center m-t-20">
                             <div class="col-xs-12">
-                                <button type="submit" class="btn btn-info btn-md btn-block" id="admin-login-btn" onclick="return ajaxFormRequest('#admin-login-btn','#admin-login-form','/admin','POST','#admin-login-status','Login','no')">Login <i class="fa fa-sign-in"></i></button> <br/>
-                                <div id='admin-login-status'></div>
+                                <button type="submit" class="btn btn-info btn-md btn-block">Login <i class="fa fa-sign-in"></i></button> <br/>
                             </div>
                         </div>
                     </form>
@@ -47,7 +61,6 @@
         </div>
     </section>
     
-    <script src="{{ URL::asset('js/natalpro.js') }}"></script>
     <script src="{{ URL::asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
 </body>
 

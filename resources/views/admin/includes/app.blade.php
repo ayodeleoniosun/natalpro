@@ -40,6 +40,16 @@ use Illuminate\Support\Facades\Session;
             #owl-demo2 .item {
                 margin: 3px;
             }
+
+            .text-success {
+                color: #28a745!important
+            }
+
+            a.text-success:focus,
+            a.text-success:hover {
+                color: #28a745!important
+            }
+
         </style>
 
     </head>
@@ -51,7 +61,7 @@ use Illuminate\Support\Facades\Session;
                 <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
         </div>
         
-        @include("admin.nav")
+        @include("admin.includes.nav")
         
         @yield("content")
 

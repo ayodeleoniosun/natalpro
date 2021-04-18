@@ -57,6 +57,7 @@ class VaccinationRequest extends Model
         
         return [
             'id' => $vaccination->id,
+            'user_id' => $vaccination->user_id,
             'request_id' => $vaccination->request_id,
             'user' => [
                 'fullname' => ucfirst($user->first_name." ".$user->last_name),
@@ -69,7 +70,7 @@ class VaccinationRequest extends Model
             'dob' => Carbon::parse($vaccination->dob)->format('F jS, Y'),
             'gender' => ucfirst($vaccination->gender),
             'amount' => $vaccination->amount,
-            'status' => ActiveStatus::find($vaccination->active_status)->name,
+            'status' => ActiveStatus::symbols($vaccination->active_status),
             'created_at' => Carbon::parse($vaccination->created_at)->format('F jS, Y h:i A'),
             'updated_at' => Carbon::parse($vaccination->updated_at)->format('F jS, Y, h:i A'),
             'cycles' => self::resourceCycles($vaccination->cycles)
@@ -83,8 +84,7 @@ class VaccinationRequest extends Model
             $cycle->vaccination_date = Carbon::parse($cycle->vaccination_date)->format('F jS, Y');
             $cycle->week_before = Carbon::parse($cycle->week_before)->format('F jS, Y');
             $cycle->day_before = Carbon::parse($cycle->day_before)->format('F jS, Y');
-            $cycle->active_status = ActiveStatus::find($cycle->active_status)->name;
-            
+            $cycle->active_status = ActiveStatus::symbols($cycle->active_status);
             return $cycle;
         });
     }

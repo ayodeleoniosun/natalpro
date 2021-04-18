@@ -22,7 +22,13 @@ class User extends Authenticable
 
     protected $fillable = ['first_name', 'last_name', 'email_address', 'phone_number', 'password'];
 
-    const USER_TYPES = ['nursing_mother', 'pregnant_women', 'healthcare_professional'];
+    public const USER_TYPES = ['nursing_mother', 'pregnant_women', 'healthcare_professional'];
+
+    public const USER_TYPE = [
+        'nursing_mother' => 'Nursing Mother',
+        'pregnant_women' => 'Pregnant Women',
+        'healthcare_professional' => 'Healthcare Professional'
+    ];
 
     public function fullname()
     {
@@ -44,7 +50,7 @@ class User extends Authenticable
         return $this->belongsTo(File::class, 'file_id');
     }
 
-    public function vaccinationRequest()
+    public function vaccinations()
     {
         return $this->hasMany(VaccinationRequest::class, 'user_id');
     }
@@ -54,10 +60,17 @@ class User extends Authenticable
         return self::where('email_address', $email)->first();
     }
 
-    public static function validateUserCredentials($email, $password)
+    public static function validateUserCredentials($email, $password, $admin = null)
     {
-        $user = self::getUserByEmail($email);
-
+        if ($admin) {
+            $user = self::where([
+                'role_type' => 'admin',
+                'email_address' => $email
+            ])->first();
+        } else {
+            $user = self::getUserByEmail($email);
+        }
+        
         if ($user) {
             return Hash::check($password, $user->password);
         }
@@ -69,18 +82,25 @@ class User extends Authenticable
     {
         $city = City::find($user->city_id)->name ?? null;
         $state = State::find($user->state_id)->name ?? null;
+        $location = ($city && $state) ? $city.", ".$state : 'N/A';
+        
+        $vaccinations = $user->vaccinations->map(function ($vaccination) {
+            return VaccinationRequest::resource($vaccination);
+        });
 
         return [
             'id' => $user->id,
-            'full_name' => ucfirst($user->first_name." ".$user->last_name),
+            'type' => self::USER_TYPE[$user->type],
+            'full_name' => ucwords($user->first_name." ".$user->last_name),
             'email_address' => $user->email_address,
             'phone_number' => $user->phone_number,
             'state_id' => $user->state_id,
             'state' => $state,
             'city_id' => $user->city_id,
             'city' => $city,
-            'location' => $city.", ".$state,
-            'status' => ActiveStatus::find($user->active_status)->name,
+            'location' => $location,
+            'vaccinations' => $vaccinations,
+            'status' => ActiveStatus::symbols($user->active_status),
             'created_at' => Carbon::parse($user->created_at)->format('F jS, Y h:i A'),
             'updated_at' => Carbon::parse($user->updated_at)->format('F jS, Y, h:i A'),
         ];

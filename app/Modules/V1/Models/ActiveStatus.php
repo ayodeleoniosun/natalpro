@@ -23,11 +23,11 @@ class ActiveStatus extends Model
     public static function symbols($status = null)
     {
         $symbols = [
-            static::ACTIVE => ['color' => 'btn-success', 'label' => 'Active'],
-            static::PENDING => ['color' => 'bg-slate', 'label' => 'Pending'],
-            static::DELETED => ['color' => 'btn-danger', 'label' => 'Deleted'],
-            static::SUSPENDED => ['color' => 'btn-warning', 'label' => 'Suspended'],
-            static::DEACTIVATED => ['color' => 'btn-warning', 'label' => 'Deactivated'],
+            static::ACTIVE => ['color' => 'text-success', 'label' => 'Active'],
+            static::PENDING => ['color' => 'text-slate', 'label' => 'Pending'],
+            static::DELETED => ['color' => 'text-danger', 'label' => 'Deleted'],
+            static::SUSPENDED => ['color' => 'text-warning', 'label' => 'Suspended'],
+            static::DEACTIVATED => ['color' => 'text-danger', 'label' => 'Deactivated'],
         ];
 
         return ($status) ? data_get($symbols, $status) : $symbols;

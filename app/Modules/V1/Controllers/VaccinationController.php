@@ -4,6 +4,7 @@ namespace App\Modules\V1\Controllers;
 
 use App\Exceptions\CustomApiErrorResponseHandler;
 use App\Modules\ApiUtility;
+use App\Modules\V1\Models\VaccinationCycle;
 use App\Modules\V1\Repositories\VaccinationRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -21,27 +22,29 @@ class VaccinationController extends Controller
 
     public function index()
     {
-        $response = $this->vaccinationRepository->index();
-        return redirect()->route('admin.vaccination.index')->with($response);
+        return view('admin.vaccination.index', ['vaccinations' => $this->vaccinationRepository->index()]);
     }
 
     public function show($id)
     {
         $response = $this->vaccinationRepository->show($id);
-        return redirect()->route('admin.vaccination.show')->with($response);
+        
+        if ($response['status'] == 'error') {
+            return redirect()->route('admin.vaccination.index')->with('alert-danger', $response['message']);
+        }
+
+        return view('admin.vaccination.show', $response);
     }
 
     public function add()
     {
-        $languages = ['english', 'yoruba', 'igbo', 'hausa'];
-        $genders = ['male', 'female'];
-        
-        $data = [
-            'languages' => $languages,
-            'genders' => $genders
-        ];
-
-        return view('user.vaccination.add', $data);
+        return view('user.vaccination.add', [
+            'languages' => [
+                'english', 'yoruba', 'igbo', 'hausa'
+            ],
+            
+            'genders' => ['male', 'female']
+        ]);
     }
 
     public function request()
@@ -86,7 +89,16 @@ class VaccinationController extends Controller
             }
         }
 
-        $response = $this->vaccinationRepository->request($body);
-        return $response;
+        return $this->vaccinationRepository->request($body);
+    }
+
+    public function smsSamples()
+    {
+        return view('admin.vaccination.sms-samples.index', $this->vaccinationRepository->smsSamples());
+    }
+
+    public function viewSmsSamples($interval)
+    {
+        return view('admin.vaccination.sms-samples.show', $this->vaccinationRepository->viewSmsSamples($interval));
     }
 }

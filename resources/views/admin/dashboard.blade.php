@@ -86,7 +86,7 @@
                 <br/><br/><br/>
             @endif
         </div>
-        @include('admin.footer')
+        @include('admin.includes.footer')
     </div>
 </div>
     

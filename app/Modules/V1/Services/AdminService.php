@@ -25,7 +25,7 @@ class AdminService implements AdminRepository
 
     public function signIn(array $data)
     {
-        if (!User::validateUserCredentials($data['email'], $data['password'])) {
+        if (!User::validateUserCredentials($data['email'], $data['password'], 'admin')) {
             return [
                 'status' => 'error',
                 'message' => 'Incorrect login details'
@@ -33,8 +33,7 @@ class AdminService implements AdminRepository
         }
 
         $user = User::getUserByEmail($data['email']);
-        Session::put('user', $user);
-        Session::save();
+        session(['user' => $user]);
 
         return [
             'status' => 'success',

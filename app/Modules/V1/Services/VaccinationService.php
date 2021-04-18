@@ -162,4 +162,29 @@ class VaccinationService implements VaccinationRepository
             ];
         }
     }
+
+    public function smsSamples()
+    {
+        $samples = VaccinationSmsSample::select('interval')->distinct()->get();
+    
+        $all_samples = $samples->map(function ($sample) {
+            $sample->vaccination_interval = VaccinationCycle::VACCINATION_CYCLES[$sample->interval];
+            $sample->sms_samples = VaccinationSmsSample::where('interval', $sample->interval)->get();
+            return $sample;
+        });
+
+        return [
+            'samples' => $all_samples,
+            'intervals' => VaccinationCycle::VACCINATION_CYCLES
+        ];
+    }
+
+    public function viewSmsSamples(string $interval)
+    {
+        return [
+            'samples' => VaccinationSmsSample::where('interval', $interval)->get(),
+            'identifier' => $interval,
+            'interval' => VaccinationCycle::VACCINATION_CYCLES[$interval]
+        ];
+    }
 }

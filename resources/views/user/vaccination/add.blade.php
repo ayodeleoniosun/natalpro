@@ -1,4 +1,4 @@
-@extends('user.vaccination.template')
+@extends('user.template')
 
 @section('title')
     Natalpro | Vaccination

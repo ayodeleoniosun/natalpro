@@ -1,4 +1,4 @@
-var idleTime = 0;
+let idleTime = 0;
 
 function payWithPaystackx(chat = null, email,phone,fullname,amount,ref_id) {
     
@@ -6,12 +6,12 @@ function payWithPaystackx(chat = null, email,phone,fullname,amount,ref_id) {
         alert("Please fill all fields");
         return false;
     } else {
-        var fee = (1.5/100)*amount;
-        var the_amount = eval(amount)+eval(fee);
-        var paystack_amount = the_amount*100;
-        var the_amount = Math.ceil(paystack_amount);
+        let fee = (1.5/100)*amount;
+        let the_amount = eval(amount)+eval(fee);
+        let paystack_amount = the_amount*100;
+        the_amount = Math.ceil(paystack_amount);
         
-        var handler = PaystackPop.setup({
+        let handler = PaystackPop.setup({
             key: 'pk_live_e6f6cdd378488be92b712074fb3c4d24bddf8483',
             //key: 'pk_test_2bd969a319c8ca9352f5d2bda30d202d97ec490c',
             email: email,
@@ -29,7 +29,7 @@ function payWithPaystackx(chat = null, email,phone,fullname,amount,ref_id) {
             callback: function(response){
 
                 if(response.status == "success") {
-                    var data = "chat="+chat+"&amount="+the_amount;
+                    let data = "chat="+chat+"&amount="+the_amount;
                     ajaxLoadingRequest('/portal/pregnant-nursing-women/pay-for-chat','#all_chats',data,'POST')
                 } else {
                     return false;
@@ -56,12 +56,12 @@ function pay(btn, success_url, error_url, status, data, email,phone,fullname,amo
     } else {
         $(btn).attr('disabled', 'disabled');
         $(btn).html('Please wait ...');
-        var fee = (1.5/100)*amount;
-        var the_amount = eval(amount)+eval(fee);
-        var paystack_amount = the_amount*100;
-        var the_amount = Math.ceil(paystack_amount);
+        let fee = (1.5/100)*amount;
+        let the_amount = eval(amount)+eval(fee);
+        let paystack_amount = the_amount*100;
+        the_amount = Math.ceil(paystack_amount);
         
-        var handler = PaystackPop.setup({
+        let handler = PaystackPop.setup({
             key: 'pk_live_e6f6cdd378488be92b712074fb3c4d24bddf8483',
             //key: 'pk_test_2bd969a319c8ca9352f5d2bda30d202d97ec490c',
             email: email,
@@ -95,7 +95,7 @@ function pay(btn, success_url, error_url, status, data, email,phone,fullname,amo
 
 
 Print = (div) => {
-    var details = document.getElementById(div).innerHTML;
+    let details = document.getElementById(div).innerHTML;
     document.body.innerHTML = details;
     window.print();
 }
@@ -127,7 +127,7 @@ PrevBtn = (current_div,prev_div) => {
 }
 
 isCharNumber = (evt) => {
-    var charCode = (evt.which) ? evt.which : event.keyCode;
+    let charCode = (evt.which) ? evt.which : event.keyCode;
         
     if (charCode > 31 && (charCode < 48 || charCode > 57) )
     { 
@@ -185,7 +185,6 @@ translateThis = (btn, submit_btn, english_val, status) => {
     let message = $(english_val).val();
     let data = "message="+message;
     let translate = ajaxLoadingRequest('/portal/controlling-room-admin/translate-vaccination', status, data, 'POST');
-
 }
 
 updateTranslate = (btn, submit_btn, english_val, status, interval) => {
@@ -201,17 +200,12 @@ updateTranslate = (btn, submit_btn, english_val, status, interval) => {
 }
 
 getMessagePages = (msg_div, pages_count) => {
-
-    // var count_pages = $("#count_pages, #count_yoruba_pages, #count_igbo_pages, #count_hausa_pages");
-    
-    // $("#sample_english_message, #sms_yoruba, #sms_hausa, #sms_igbo, #update_sample_english_message");
-
-    var count_pages = $(pages_count);
-    var msg_txt_len = $(msg_div).val().length;
-    var sms_char = 160;
-    var pages = msg_txt_len/sms_char;
-    var pages = Math.ceil(pages);
-    var data = "pages="+pages;
+    let count_pages = $(pages_count);
+    let msg_txt_len = $(msg_div).val().length;
+    let sms_char = 160;
+    let pages = msg_txt_len/sms_char;
+    pages = Math.ceil(pages);
+    let data = "pages="+pages;
 
     if(pages == 1) {
         count_pages.html("<b>"+msg_txt_len+"</b> characters = <b>"+pages+"</b> page <br/><b>"+pages+"</b> unit will be deducted per page");
@@ -261,7 +255,7 @@ $("#sms_hausa").on('keypress keyup keydown blur mouseleave', function(event) {
 previewImage = (input) => {
 
     if(input.files && input.files[0]) {
-        var reader = new FileReader();
+        let reader = new FileReader();
         reader.onload = function(e) {
             $("#preview_pix").attr('src',e.target.result);
             
@@ -272,13 +266,13 @@ previewImage = (input) => {
 
 ajaxFormRequest = (btn_id,form,url,data_type,the_status,btn_title,file_upload) => {
 
-    var btn = $(btn_id);
-    var status = $(the_status);
+    let btn = $(btn_id);
+    let status = $(the_status);
     btn.attr("disabled",true);
     btn.html("Please wait ...");
 
     if(file_upload == "no") {
-        var data = $(form).serialize();
+        let data = $(form).serialize();
         
         if(data_type == "POST") {
                         
@@ -338,7 +332,7 @@ ajaxFormRequest = (btn_id,form,url,data_type,the_status,btn_title,file_upload) =
         }
     } else if(file_upload == "yes") {
         
-        var data = new FormData($(form)[0]);
+        let data = new FormData($(form)[0]);
                 
         $.ajax(
         {
@@ -371,8 +365,8 @@ ajaxFormRequest = (btn_id,form,url,data_type,the_status,btn_title,file_upload) =
 
 ajaxFormSocketRequest = (form,url,the_status,file_upload) => {
 
-    var data = $(form).serialize();
-    var status = $(the_status);
+    let data = $(form).serialize();
+    let status = $(the_status);
     
     if($("#message").val() != "") {
     
@@ -397,11 +391,10 @@ ajaxFormSocketRequest = (form,url,the_status,file_upload) => {
     }
 }
 
-ajaxLoadingRequest = (url,the_status,data,type) => {
-
+ajaxLoadingRequest = (url, the_status, type, data = null) => {
     if(type == "GET") {
-        var status = $(the_status);
-        status.html("<svg class='circular' viewBox='25 25 50 50'><circle class='path' cx='50' cy='50' r='20' fill='none' stroke-width='2' stroke-miterlimit='10' /> </svg>");
+        let status = $(the_status);
+        status.html("Please wait ...");
 
         $.ajax(
         {
@@ -415,17 +408,14 @@ ajaxLoadingRequest = (url,the_status,data,type) => {
             success:function(msg) {
                 status.fadeIn("fast");
                 status.html(msg);
-                //window.scrollTo(0, document.body.scrollHeight);
             },
             error: function(the_error) {
                 status.fadeIn("fast");
                 status.html("<p style='color:red'>Request not successful. Try again.</p>");
             }
         });
-    } 
-    else if(type == "POST") {
-        
-        var status = $(the_status);
+    } else if(type == "POST") {
+        let status = $(the_status);
         status.html("<svg class='circular' viewBox='25 25 50 50'><circle class='path' cx='50' cy='50'   r='20' fill='none' stroke-width='2' stroke-miterlimit='10' /> </svg>");
         
         $.ajax(
@@ -454,7 +444,7 @@ ajaxLoadingRequest = (url,the_status,data,type) => {
 ajaxNoLoadingRequest = (url,the_status,data,type) => {
 
     if(type == "GET") {
-        var status = $(the_status);
+        let status = $(the_status);
         
         $.ajax(
         {
@@ -477,7 +467,7 @@ ajaxNoLoadingRequest = (url,the_status,data,type) => {
     } 
     else if(type == "POST") {
         
-        var status = $(the_status);
+        let status = $(the_status);
         
         $.ajax(
         {
@@ -512,10 +502,10 @@ userChats = (type,user_id) => {
 }
 
 forumRequests = (user_type,type,id) => {
-    var data = "id="+id;
+    let data = "id="+id;
     
     if(type == "delete-comment" || type == "nurse-delete-comment" || type == "admin-delete-comment") {
-        var confirm = window.confirm('Delete comment?');
+        let confirm = window.confirm('Delete comment?');
 
         if(confirm) {
             if(user_type == "admin") {
@@ -537,14 +527,12 @@ forumRequests = (user_type,type,id) => {
     }
 }
 
-smsSampleRequest = (type,interval) => {
-    
-    var data = "type="+type+"&interval="+interval;
-    ajaxLoadingRequest('/portal/controlling-room-admin/vaccination-sms-sample-requests/operation/'+type,'#sms-status'+interval,data,'POST');
+viewSmsSample = (type,interval) => {
+    let data = "type="+type+"&interval="+interval;
 }
 
 smsRequest = (type,id) => {
-    var data = "type="+type+"&id="+id;
+    let data = "type="+type+"&id="+id;
     
     if (type == "view") {
         ajaxLoadingRequest('/portal/controlling-room-admin/vaccination-sms-requests/operation/'+type,'#sms-status'+id,data,'POST');
@@ -560,20 +548,20 @@ bulkSmsRequest = (id) => {
 nurseRequest = (type,req_id) => {
     
     if(type == "decline") {
-        var confirm = window.confirm('Decline request?');
+        let confirm = window.confirm('Decline request?');
 
         if(confirm) {
-            var data = "req_id="+req_id;
+            let data = "req_id="+req_id;
             ajaxLoadingRequest('/portal/controlling-room-admin/nurse-requests/operation/'+type,'#assign-status'+req_id,data,'POST');
         }
     } else {
-        var data = "req_id="+req_id;
+        let data = "req_id="+req_id;
         ajaxLoadingRequest('/portal/controlling-room-admin/nurse-requests/operation/'+type,'#assign-status'+req_id,data,'POST');
     }
 }
 
 viewFeedbacks = (type,req_id) => {
-    var data = "type="+type+"&req_id="+req_id;
+    let data = "type="+type+"&req_id="+req_id;
     
     if(type == "admin") {
         ajaxLoadingRequest('/portal/controlling-room-admin/chats/view-feedback','#feedback-status'+req_id,data,'POST');
