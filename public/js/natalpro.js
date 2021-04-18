@@ -1,4 +1,40 @@
-let idleTime = 0;
+function payWithFlutterwave(email, phone_number, customer, amount, data, ref_id, public_key, payment_description, logo) {
+    FlutterwaveCheckout({
+      public_key: public_key,
+      tx_ref: ref_id,
+      amount: amount,
+      currency: "NGN",
+      country: "NG",
+      payment_options: "card, mobilemoneyghana, ussd",
+      redirect_url: // specified redirect URL
+        "https://callbacks.piedpiper.com/flutterwave.aspx?ismobile=34",
+      meta: {
+        consumer_id: 23,
+        consumer_mac: "92a3-912ba-1192a",
+      },
+      customer: {
+        email: email,
+        phone_number: phone_number,
+        name: customer,
+      },
+      callback: function (response) {
+        if(response.status == "success") {
+            let data = "chat="+chat+"&amount="+the_amount;
+            ajaxLoadingRequest('/portal/pregnant-nursing-women/pay-for-chat','#all_chats',data,'POST')
+        } else {
+            return false;
+        }
+      },
+      onclose: function() {
+        // close modal
+      },
+      customizations: {
+        title: "Natalpro",
+        description: payment_description,
+        logo: logo,
+      },
+    });
+}
 
 function payWithPaystackx(chat = null, email,phone,fullname,amount,ref_id) {
     
@@ -287,10 +323,9 @@ ajaxFormRequest = (btn_id,form,url,data_type,the_status,btn_title,file_upload) =
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(response) {
-                    console.log(response);
                     status.fadeIn("fast");
                     if (response.status == 'success') {
-                        $(form).trigger("reset");
+                        //$(form).trigger("reset");
                         status.html("<p style='color:green'>"+response.message+"</p>");
                     } else {
                         status.html("<p class='text-danger'>"+response.message+"</p>");

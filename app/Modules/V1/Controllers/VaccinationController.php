@@ -7,6 +7,7 @@ use App\Modules\ApiUtility;
 use App\Modules\V1\Models\VaccinationCycle;
 use App\Modules\V1\Repositories\VaccinationRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
 class VaccinationController extends Controller
@@ -47,6 +48,36 @@ class VaccinationController extends Controller
         ]);
     }
 
+    public function paymentSuccess()
+    {
+        $body = $this->request->all();
+        
+        $validator = Validator::make(
+            $body,
+            [
+                'transaction_id' => 'required|string',
+                'tx_ref' => 'required|string',
+            ],
+            [
+                'transaction_id.required' => 'Transaction ID is required',
+                'tx_ref.required' => 'Reference ID is required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            foreach ($validator->errors()->all() as $error) {
+                return redirect()->route('vaccination.add')->with('alert-danger', $error);
+            }
+        }
+
+        $transaction_id = $this->request->input('transaction_id');
+        $reference_id = $this->request->input('tx_ref');
+
+        $response = $this->vaccinationRepository->callback($transaction_id, $reference_id);
+        
+        return redirect()->route('vaccination.add')->with('alert-'.$response['label'], $response['message']);
+    }
+    
     public function request()
     {
         $body = $this->request->all();
@@ -77,19 +108,17 @@ class VaccinationController extends Controller
 
         if ($validator->fails()) {
             foreach ($validator->errors()->all() as $error) {
-                $validation_errors = [
-                    'status' => 'error',
-                    'label' => 'danger',
-                    'message' => $error
-                ];
-            }
-        
-            if (count($validation_errors) > 0) {
-                return $validation_errors;
+                return redirect()->back()->withInput()->with('alert-danger', $error);
             }
         }
 
-        return $this->vaccinationRepository->request($body);
+        $response = $this->vaccinationRepository->request($body);
+
+        if ($response['status'] == 'error') {
+            return redirect()->back()->withInput()->with('alert-danger', $response['message']);
+        }
+
+        return redirect()->away($response['payment_link']);
     }
 
     public function smsSamples()

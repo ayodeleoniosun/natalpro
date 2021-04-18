@@ -21,6 +21,7 @@ Route::group(
             ['prefix' => 'vaccination'],
             function () {
                 Route::get('/', 'VaccinationController@add')->name('vaccination.add');
+                Route::get('/payment-success', 'VaccinationController@paymentSuccess')->name('vaccination.payment-success');
                 Route::post('/request', 'VaccinationController@request')->name('vaccination.request');
             }
         );

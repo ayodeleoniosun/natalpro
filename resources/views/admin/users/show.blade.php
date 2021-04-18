@@ -88,7 +88,7 @@
                                             @foreach($user['vaccinations'] as $vaccination)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td><a href="{{ route('admin.vaccination.show', ['id' => $vaccination['id']]) }}"><b> {{ $vaccination['request_id'] }} </b></a></td>
+                                                    <td><a href="{{ route('admin.vaccination.show', ['id' => $vaccination['id']]) }}"><b> {{ $vaccination['transaction_id'] }} </b></a></td>
                                                     <td>{{ $vaccination['mother'] }}</td>
                                                     <td>{{ $vaccination['child'] }}</td>
                                                     <td>{{ $vaccination['dob'] }}</td>

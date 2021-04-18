@@ -3,6 +3,7 @@
 namespace App\Modules\V1\Services;
 
 use App\Handlers\SmsHandler;
+use App\Handlers\Flutterwave;
 use App\Modules\ApiUtility;
 use App\Modules\V1\Enum\VaccinationInterval;
 use App\Modules\V1\Models\ActiveStatus;
@@ -114,43 +115,26 @@ class VaccinationService implements VaccinationRepository
             }
 
             if ($user) {
-                $vaccination_request_id = VaccinationRequest::GenerateRequestId(6);
-                $vaccination_amount = Setting::where('id', 1)->value('vaccination_amount');
-
-                $vaccination_request = VaccinationRequest::create([
-                    'request_id' => $vaccination_request_id,
+                $vaccination = VaccinationRequest::create([
+                    'reference_id' => 'tx-'.ApiUtility::generateTransactionReference(),
                     'user_id' => $user->id,
                     'mother' => strtolower($data['mother']),
                     'child' => strtolower($data['child']),
                     'dob' => $data['dob'],
                     'language' => strtolower($data['language']),
-                    'gender' => strtolower($data['gender']),
-                    'amount' => $vaccination_amount
+                    'gender' => strtolower($data['gender'])
                 ]);
 
-                VaccinationRequest::generateVaccinationCycles($vaccination_request);
-
-                $welcome_message = VaccinationSmsSample::where([
-                    'language' => $vaccination_request->language,
-                    'interval' => VaccinationInterval::AT_BIRTH,
-                    'active_status' => ActiveStatus::ACTIVE
-                ])->value('sms');
-
-                $status = SmsHandler::SendSms($user->phone_number, $welcome_message);
-                Log::info("Vaccination Welcome SMS: " . $status);
-
-                VaccinationCycle::where([
-                    'vaccination_request_id' => $vaccination_request->id,
-                    'interval' => VaccinationInterval::AT_BIRTH,
-                ])->update(['active_status' => ActiveStatus::DEACTIVATED]);
+                VaccinationRequest::where('id', $vaccination->id)->update(['active_status' => ActiveStatus::PENDING]);
             }
 
             DB::commit();
 
+            $payment = app(Flutterwave::class)->vaccinationPayment($user, $vaccination->reference_id);
+            
             return [
                 'status' => 'success',
-                'label' => 'success',
-                'message' => 'Vaccination request successfully added.'
+                'payment_link' => $payment->data->link
             ];
         } catch (\Exception $e) {
             Log::error('Registering vaccination request =>' . $e);
@@ -161,6 +145,61 @@ class VaccinationService implements VaccinationRepository
                 'message' => 'Error occurred while registering vaccination request.'
             ];
         }
+    }
+
+    public function callback(int $transaction_id, string $reference_id)
+    {
+        $transaction = app(Flutterwave::class)->verify($transaction_id);
+        
+        if ($transaction->status == 'success') {
+            $vaccination_request = VaccinationRequest::where('reference_id', $transaction->data->tx_ref)->first();
+
+            if ($vaccination_request->active_status == ActiveStatus::PENDING) {
+                DB::beginTransaction();
+
+                $user = User::find($vaccination_request->user_id);
+                
+                VaccinationRequest::generateVaccinationCycles($vaccination_request);
+
+                $welcome_message = VaccinationSmsSample::where([
+                    'language' => $vaccination_request->language,
+                    'interval' => VaccinationInterval::AT_BIRTH,
+                    'active_status' => ActiveStatus::ACTIVE
+                ])->value('sms');
+
+                $vaccination_request->transaction_id = $transaction_id;
+                $vaccination_request->active_status = ActiveStatus::ACTIVE;
+                $vaccination_request->save();
+
+                VaccinationCycle::where([
+                    'vaccination_request_id' => $vaccination_request->id,
+                    'interval' => VaccinationInterval::AT_BIRTH,
+                ])->update(['active_status' => ActiveStatus::DEACTIVATED]);
+
+                $status = SmsHandler::SendSms($user->phone_number, $welcome_message);
+                Log::info("Vaccination Welcome SMS: " . $status);
+
+                DB::commit();
+
+                return [
+                    'status' => 'success',
+                    'label' => 'success',
+                    'message' => 'Vaccination request successfully submitted.'
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'label' => 'danger',
+                    'message' => 'Vaccination request already approved.'
+                ];
+            }
+        }
+
+        return [
+            'status' => 'error',
+            'label' => 'danger',
+            'message' => 'Invalid transaction ID.'
+        ];
     }
 
     public function smsSamples()

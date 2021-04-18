@@ -16,9 +16,24 @@
                     </div>
                     <br/>
 
+                    <div class="flash-message">
+                        @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                            @if(Session('alert-' . $msg))
+                                <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="alert alert-{{ $msg }} alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    {{ Session('alert-' . $msg) }}
+                                    </div>
+                                </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    
                     <div class="row" id="validation">
-                        <h3 class="container" align="center">Register For Our Vaccination Reminder!</h3>
-                        <form class="form-horizontal form-material container" id="vaccination_form" method="POST" onsubmit="return false">
+                        <h3 class="container" align="center">Register For Our Vaccination Reminder!</h3> <br/>
+                        <form class="form-horizontal form-material container" id="vaccination_form" method="POST" action="{{ route('vaccination.request') }}">
                             {{csrf_field()}}
                             <br/> 
                             <div class="form-group">
@@ -33,9 +48,9 @@
                             
                             <div class="form-group">
                                 <label class="control-label">Language</label>
-                                <select name="language" class="form-control">
+                                <select name="language" class="form-control" >
                                     @foreach ($languages as $language) 
-                                        <option value="{{ $language }}"> {{ ucfirst($language) }} </option>
+                                        <option value="{{ $language }}" @if( old('language')  == $language) selected="selected" @endif> {{ ucfirst($language) }} </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -61,17 +76,12 @@
                                 <label for="recipient-name" class="control-label">Child's Gender</label>
                                 <select name="gender" class="form-control">
                                     @foreach ($genders as $gender) 
-                                        <option value="{{ $gender }}"> {{ ucfirst($gender) }} </option>
+                                        <option value="{{ $gender }}" @if( old('gender')  == $gender) selected="selected" @endif> {{ ucfirst($gender) }} </option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            <button type="button" id="vaccination_btn" class="btn btn-info btn-block" onclick="return ajaxFormRequest('#vaccination_btn','#vaccination_form','/vaccination/request','POST','#vaccination_status','Submit','no')">Submit </button>
-                            <br/>
-                            
-                            <div align="center">
-                                <div id="vaccination_status" style="font-size:13px"></div>
-                            </div>
+                            <button type="submit" id="vaccination_btn" class="btn btn-info btn-block">Submit </button>
                             
                         </form>
                     </div>

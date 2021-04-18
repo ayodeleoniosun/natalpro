@@ -28,6 +28,11 @@ class ApiUtility
         return bin2hex(openssl_random_pseudo_bytes(32));
     }
 
+    public static function generateTransactionReference()
+    {
+        return bin2hex(openssl_random_pseudo_bytes(6));
+    }
+
     public static function mail_subject_by_environment()
     {
         $environment = App::environment();

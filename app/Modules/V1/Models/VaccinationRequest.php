@@ -14,7 +14,7 @@ class VaccinationRequest extends Model
     protected $table = 'vaccination_request';
 
     protected $fillable = [
-        'request_id',
+        'reference_id',
         'user_id',
         'mother',
         'child',
@@ -58,7 +58,8 @@ class VaccinationRequest extends Model
         return [
             'id' => $vaccination->id,
             'user_id' => $vaccination->user_id,
-            'request_id' => $vaccination->request_id,
+            'reference_id' => $vaccination->reference_id,
+            'transaction_id' => $vaccination->transaction_id,
             'user' => [
                 'fullname' => ucfirst($user->first_name." ".$user->last_name),
                 'email_address' => $user->email_address,

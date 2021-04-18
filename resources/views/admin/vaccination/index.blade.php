@@ -53,7 +53,7 @@
                                     @foreach($vaccinations as $key => $vaccination)
                                         <tr>
                                             <td>{{ $key += 1 }}</td>
-                                            <td><a href="{{ route('admin.vaccination.show', ['id' => $vaccination['id']]) }}"><b> {{ $vaccination['request_id'] }} </b></a></td>
+                                            <td><a href="{{ route('admin.vaccination.show', ['id' => $vaccination['id']]) }}"><b> {{ $vaccination['transaction_id'] }} </b></a></td>
                                             <td><a href="{{ route('admin.user.profile', ['id' => $vaccination['user_id']]) }}" class="text-info"> {{ $vaccination['user']['fullname'] }} </a></td>
                                             <td>{{ $vaccination['mother'] }}</td>
                                             <td>{{ $vaccination['child'] }}</td>

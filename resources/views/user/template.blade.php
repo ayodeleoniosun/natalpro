@@ -15,6 +15,7 @@
     <link href="{{ URL::asset('assets/plugins/sweetalert/sweetalert.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('css/colors/blue.css') }}" id="theme" rel="stylesheet">
     <script src="{{ URL::asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
 </head>
 
 <body>
