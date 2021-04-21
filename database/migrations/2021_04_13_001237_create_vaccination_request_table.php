@@ -16,7 +16,7 @@ class CreateVaccinationRequestTable extends Migration
         Schema::create('vaccination_request', function (Blueprint $table) {
             $table->increments('id');
             $table->string('reference_id');
-            $table->string('transaction_id');
+            $table->string('transaction_id')->nullable();
             $table->unsignedInteger('user_id');
             $table->enum('language', ['english', 'yoruba', 'hausa', 'igbo'])->default('english');
             $table->string('mother');
