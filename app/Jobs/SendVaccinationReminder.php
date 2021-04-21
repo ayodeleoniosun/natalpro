@@ -111,8 +111,8 @@ class SendVaccinationReminder implements ShouldQueue
         }
         
         $sms = $sms.' '.$additional_message;
-        $status = SmsHandler::SendSms($this->phone_number, $sms);
-        Log::info($this->duration.' vaccination reminder SMS for '.$this->mother.' : '.$status);
+        $status = app(SmsHandler::class)->SendSms($this->phone_number, $sms);
+        Log::info($this->duration.' vaccination reminder SMS for '.$this->mother.' ('.$this->phone_number.') : '.$status);
         
         VaccinationCycle::where([
             'vaccination_request_id' => $this->vaccination_request_id,

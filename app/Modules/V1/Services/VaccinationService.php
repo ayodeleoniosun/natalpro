@@ -169,6 +169,7 @@ class VaccinationService implements VaccinationRepository
 
                 $vaccination_request->transaction_id = $transaction_id;
                 $vaccination_request->active_status = ActiveStatus::ACTIVE;
+                $vaccination_request->amount = $transaction->data->amount;
                 $vaccination_request->save();
 
                 VaccinationCycle::where([
@@ -176,9 +177,10 @@ class VaccinationService implements VaccinationRepository
                     'interval' => VaccinationInterval::AT_BIRTH,
                 ])->update(['active_status' => ActiveStatus::DEACTIVATED]);
 
-                $status = SmsHandler::SendSms($user->phone_number, $welcome_message);
-                Log::info("Vaccination Welcome SMS: " . $status);
+                $status = app(SmsHandler::class)->SendSms($user->phone_number, $welcome_message);
+                Log::info("Vaccination Welcome SMS to ".$user->phone_number." = ". $status);
 
+                
                 DB::commit();
 
                 return [

@@ -2,30 +2,31 @@
 
 namespace App\Handlers;
 
+use Twilio\Rest\Client;
+
 class SmsHandler
 {
-    public const BASE_URL = 'https://smartsmssolutions.com/api/json.php?';
-    public const SENDER_NAME = 'NatalPro';
-    public const ROUTING = 4;
-    public const TYPE = 0;
-    public const TOKEN = 'qczmEvQOju2v3MDuEIrAHclCG3om1WMN43rJJZPoMjjxZnyre0avGUwEWh8OWora18t1wghhIdZLL2oQEL4zKcqATTnwZBTCBW6Z';
-    public const SUCCESS_CODE = 1000;
+    protected $sid;
+    protected $msg_id;
+    protected $auth_token;
+    protected $sender_name;
 
-    public static function SendSms($recipient, $message)
+    public function __construct()
     {
-        $client = new \GuzzleHttp\Client();
-        $url = self::BASE_URL.'message='.urlencode($message).'&to='.$recipient.'&sender='.self::SENDER_NAME.'&type='.self::TYPE.'&routing='.self::ROUTING.'&token='.self::TOKEN;
-        
-        $response = $client->request('GET', $url);
-        $body = $response->getBody();
-        $str = $body->getContents();
-        $content = "$str";
-        $decode_response = json_decode($content, true);
-        
-        // while ($decode_response['code'] != self::SUCCESS_CODE) {
-        //     self::SendSms($recipient, $message);
-        // }
+        $this->sid = env('TWILIO_ACCOUNT_SID');
+        $this->msg_id = env('TWILIO_MSG_ID');
+        $this->auth_token = env('TWILIO_AUTH_TOKEN');
+        $this->sender_name = env('SMS_SENDER_NAME');
+    }
+    public function SendSms($recipient, $message)
+    {
+        $twilio = new Client($this->sid, $this->auth_token);
 
-        return ($decode_response['code'] == self::SUCCESS_CODE) ? 1 : 2;
+        $message = $twilio->messages->create($recipient, [
+            "from" => $this->sender_name,
+            "body" => $message
+        ]);
+            
+        return !$message->errorCode ? 'success' : 'failed';
     }
 }
