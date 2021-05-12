@@ -15,12 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(
-    ['namespace' => 'App\Modules\V1\Controllers'],
+    ['namespace' => 'App\Modules\V1\Controllers', 'domain' => env('APP_DOMAIN')],
     function () {
+        Route::get('/', 'VaccinationController@add')->name('vaccination.add');
         Route::group(
             ['prefix' => 'vaccination'],
             function () {
-                Route::get('/', 'VaccinationController@add')->name('vaccination.add');
                 Route::get('/payment-success', 'VaccinationController@paymentSuccess')->name('vaccination.payment-success');
                 Route::post('/request', 'VaccinationController@request')->name('vaccination.request');
             }
