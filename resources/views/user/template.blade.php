@@ -12,6 +12,7 @@
     <title>@yield('title')</title>
     <link href="{{ asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/wizard/steps.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/sweetalert/sweetalert.css') }}" rel="stylesheet">
     <link href="{{ asset('css/colors/blue.css') }}" id="theme" rel="stylesheet">
     <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
