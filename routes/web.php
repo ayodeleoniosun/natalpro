@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(
-    ['namespace' => 'App\Modules\V1\Controllers', 'domain' => env('APP_DOMAIN')],
+    ['namespace' => 'App\Modules\V1\Controllers'],
     function () {
         Route::get('/', 'VaccinationController@add')->name('vaccination.add');
         Route::group(
