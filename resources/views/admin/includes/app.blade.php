@@ -1,19 +1,10 @@
-<?php
-
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
-
-?>
-
 <!DOCTYPE html>
     <html lang="en">
 
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-         <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
@@ -21,17 +12,13 @@ use Illuminate\Support\Facades\Session;
         <!-- Favicon icon -->
         <link rel="icon" type="image/png" sizes="16x16" href="{{ URL::asset('assets/images/favicon.png') }}">
         <title>@yield('title')</title>
-        <!-- Bootstrap Core CSS -->
-        <link href="{{ URL::asset('assets/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css') }}" rel="stylesheet">
-        <!-- Page plugins css -->
-        <link href="{{ URL::asset('assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
-        <!-- Daterange picker plugins css -->
-        <link href="{{ URL::asset('assets/plugins/timepicker/bootstrap-timepicker.min.css') }}" rel="stylesheet">
-        <link href="{{ URL::asset('assets/plugins/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
-        <link href="{{ URL::asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-        <link href="{{ URL::asset('css/style.css') }}" rel="stylesheet">
-        <link href="{{ URL::asset('css/colors/blue.css') }}" id="theme" rel="stylesheet">
-        <script src="{{ URL::asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+        <link href="{{ asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/plugins/wizard/steps.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/plugins/sweetalert/sweetalert.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/colors/blue.css') }}" id="theme" rel="stylesheet">
+        <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+
         <style>
             #owl-demo .item img {
                 display: block;
@@ -66,36 +53,24 @@ use Illuminate\Support\Facades\Session;
         
         @yield("content")
 
-        <script src="{{ URL::asset('js/natalpro.js') }}"></script>
-        <script src="{{ URL::asset('assets/plugins/bootstrap/js/popper.min.js') }}"></script>
-        <script src="{{ URL::asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
-        <script src="{{ URL::asset('js/jquery.slimscroll.js') }}"></script>
-        <script src="{{ URL::asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-        <script src="{{ URL::asset('js/sidebarmenu.js') }}"></script>
-        <script src="{{ URL::asset('assets/plugins/sticky-kit-master/dist/sticky-kit.min.js') }}"></script>
-        <script src="{{ URL::asset('assets/plugins/sparkline/jquery.sparkline.min.js') }}"></script>
-        <script src="{{ URL::asset('js/custom.min.js') }}"></script>
-        <script src="{{ URL::asset('assets/plugins/moment/moment.js') }}"></script>
-        <script src="{{ URL::asset('assets/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}"></script>
-        <!-- Date Picker Plugin JavaScript -->
-        <script src="{{ URL::asset('assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
-        <!-- Date range Plugin JavaScript -->
-        <script>
-
-        $(document).ready(function() {
-            
-            $('#example23').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
-            });
-
-            $('.dataTables_info, #example23_paginate').hide('fast');
-        });
-        // MAterial Date picker    
-        $('#mdate').bootstrapMaterialDatePicker({ weekStart : 0, time: false,autoclose: true });
-    </script>
-
+        <script src="{{ asset('js/natalpro.js') }}"></script>
+        <script src="{{ asset('assets/plugins/bootstrap/js/popper.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+        <!-- slimscrollbar scrollbar JavaScript -->
+        <script src="{{ asset('js/jquery.slimscroll.js') }}"></script>
+        <!--Wave Effects -->
+        <script src="{{ asset('js/waves.js') }}"></script>
+        <!--Menu sidebar -->
+        <script src="{{ asset('js/sidebarmenu.js') }}"></script>
+        <!--stickey kit -->
+        <script src="{{ asset('assets/plugins/sticky-kit-master/dist/sticky-kit.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/sparkline/jquery.sparkline.min.js') }}"></script>
+        <!--Custom JavaScript -->
+        <script src="{{ asset('assets/plugins/moment/min/moment.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/wizard/jquery.steps.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/wizard/jquery.validate.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/sweetalert/sweetalert.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/wizard/steps.js') }}"></script>
+        <script src="{{ asset('js/custom.min.js') }}"></script>
 </body>
 </html>
