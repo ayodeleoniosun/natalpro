@@ -17,10 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::group(
     ['namespace' => 'App\Modules\V1\Controllers'],
     function () {
-        Route::get('/', 'VaccinationController@add')->name('vaccination.add');
+        Route::get('/', 'HomeController@index')->name('index');
         Route::group(
             ['prefix' => 'vaccination'],
             function () {
+                Route::get('/', 'VaccinationController@add')->name('vaccination.add');
                 Route::get('/payment-success', 'VaccinationController@paymentSuccess')->name('vaccination.payment-success');
                 Route::post('/request', 'VaccinationController@request')->name('vaccination.request');
             }
