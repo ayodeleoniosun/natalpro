@@ -49,7 +49,7 @@ class VaccinationService implements VaccinationRepository
 
     public function request(array $data)
     {
-        $fullname = strtolower($data['first_name'])."".strtolower($data['last_name']);
+        $fullname = strtolower($data['child'])."_".strtolower($data['mother']);
         $is_email_generated = false;
         
         if (!isset($data['email_address']) || empty($data['email_address'])) {
@@ -105,11 +105,11 @@ class VaccinationService implements VaccinationRepository
 
             if (!$user) {
                 $user = (new UserService)->signUp([
-                    'first_name' => $data['first_name'],
-                    'last_name' => $data['last_name'],
+                    'first_name' => strtolower($data['child']),
+                    'last_name' => strtolower($data['mother']),
                     'phone_number' => $data['phone_number'],
                     'email_address' => $email_address,
-                    'password' => $email_address,
+                    'password' => "natalpro".strtolower($data['mother']),
                     'is_email_generated' => $is_email_generated
                 ]);
             }

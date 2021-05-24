@@ -2,13 +2,12 @@
 
 namespace App\Modules\V1\Services;
 
+use App\Modules\ApiUtility;
 use App\Modules\V1\Models\Setting;
 use App\Modules\V1\Models\User;
-use App\Modules\V1\Models\VaccinationRequest;
 use App\Modules\V1\Repositories\AdminRepository;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
 
 class AdminService implements AdminRepository
 {
@@ -33,8 +32,11 @@ class AdminService implements AdminRepository
         }
 
         $user = User::getUserByEmail($data['email']);
+        $user->token_expires_at = ApiUtility::next_one_month();
+        $user->save();
+        
         session(['user' => $user]);
-
+        
         return [
             'status' => 'success',
             'message' => 'Login successful',

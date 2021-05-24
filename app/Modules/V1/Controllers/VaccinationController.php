@@ -85,8 +85,6 @@ class VaccinationController extends Controller
         $validator = Validator::make(
             $body,
             [
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
                 'phone_number' => 'required|string',
                 'mother' => 'required|string',
                 'child' => 'required|string',
@@ -95,8 +93,6 @@ class VaccinationController extends Controller
                 'language' => 'required|string'
             ],
             [
-                'first_name.required' => 'First name is required',
-                'last_name.required' => 'Last name is required',
                 'phone_number.required' => 'Phone number is required',
                 'mother.required' => 'Mother\'s name is required',
                 'child.required' => 'Child\'s name is required',

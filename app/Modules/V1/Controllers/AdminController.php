@@ -34,16 +34,12 @@ class AdminController extends Controller
     public function login()
     {
         $response = $this->adminRepository->signIn($this->request->all());
-        
+    
         if ($response['status'] == 'success') {
-            // if ($this->request->session()->has('url')) {
-            //     return Redirect::to(session('url'));
-            // }
-            
             return redirect()->route('admin.dashboard');
-        } else {
-            return redirect()->route('admin.index')->with('alert-danger', $response['message']);
         }
+    
+        return redirect()->route('admin.index')->with('alert-danger', $response['message']);
     }
 
     public function settings()

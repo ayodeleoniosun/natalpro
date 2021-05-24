@@ -37,25 +37,6 @@
                             {{csrf_field()}}
                             <br/> 
                             <div class="form-group">
-                                <label class="control-label">Firstname</label>
-                                <input type="text" class="form-control" name="first_name" value="{{ old('first_name') }}"/>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="control-label">Lastname</label>
-                                <input type="text" class="form-control" name="last_name" value="{{ old('last_name') }}"/>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="control-label">Language</label>
-                                <select name="language" class="form-control" >
-                                    @foreach ($languages as $language) 
-                                        <option value="{{ $language }}" @if( old('language')  == $language) selected="selected" @endif> {{ ucfirst($language) }} </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group">
                                 <label for="recipient-name" class="control-label">Mother's name</label>
                                 <input type="text" class="form-control" name="mother" value="{{ old('mother') }}"/>
                             </div>
@@ -81,6 +62,15 @@
                                 </select>
                             </div>
 
+                            <div class="form-group">
+                                <label class="control-label">Language to receive SMS with</label>
+                                <select name="language" class="form-control" >
+                                    @foreach ($languages as $language) 
+                                        <option value="{{ $language }}" @if( old('language')  == $language) selected="selected" @endif> {{ ucfirst($language) }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
                             <button type="submit" id="vaccination_btn" class="btn btn-info btn-block">Submit </button>
                             
                         </form>
