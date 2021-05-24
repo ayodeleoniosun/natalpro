@@ -18,6 +18,7 @@ Route::group(
     ['namespace' => 'App\Modules\V1\Controllers'],
     function () {
         Route::get('/', 'HomeController@index')->name('index');
+        Route::get('/contact', 'HomeController@contactUs')->name('contact-us');
         Route::group(
             ['prefix' => 'vaccination'],
             function () {
