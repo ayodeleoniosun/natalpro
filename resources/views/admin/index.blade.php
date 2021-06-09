@@ -41,10 +41,10 @@
                             @endif
                         @endforeach
                     </div>
-                    
+
                         <div class="form-group ">
                             <div class="col-xs-12">
-                            <input class="form-control" type="email" name="email" required="" placeholder="Email address"> </div>
+                            <input class="form-control" type="email" name="username" required="" placeholder="Email address"> </div>
                         </div>
                         <div class="form-group">
                             <div class="col-xs-12">
