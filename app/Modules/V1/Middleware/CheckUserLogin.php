@@ -2,15 +2,13 @@
 
 namespace App\Modules\V1\Middleware;
 
-use App\Modules\ApiUtility;
 use App\Modules\V1\Models\ActiveStatus;
 use App\Modules\V1\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Redirect;
 
-class CheckAdminLogin
+class CheckUserLogin
 {
     /**
      * Handle an incoming request.
@@ -25,13 +23,13 @@ class CheckAdminLogin
         $session = session('user');
             
         if ($session) {
-            $admin = User::where([
+            $user = User::where([
                 'id' => $session->id,
-                'role_type' => 'admin',
+                'role_type' => 'user',
                 'active_status' => ActiveStatus::ACTIVE
             ])->whereDate('token_expires_at', '>=', $now)->first();
             
-            if (!$admin) {
+            if (!$user) {
                 $replaced = str_replace(url('/'), '', url()->current());
                 
                 if (($replaced == "") || ($replaced == "/")) {
@@ -40,14 +38,14 @@ class CheckAdminLogin
 
                 session(['url' => $replaced]);
                 
-                return redirect('/admin');
+                return redirect('/user');
             }
 
-            $request->merge(['auth_user' => $admin]);
+            $request->merge(['auth_user' => $user]);
 
             return $next($request);
         }
 
-        return redirect('/admin');
+        return redirect('/user');
     }
 }

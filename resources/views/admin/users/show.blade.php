@@ -1,14 +1,14 @@
 @extends('admin.includes.app')
 
 @section('title')
-    Natalpro | {{ $user['full_name'] }}'s Profile
+    Natalpro | {{ $user->full_name }}'s Profile
 @endsection
 
 @section('content')
     <div class="page-wrapper">
         <div class="row page-titles">
             <div class="col-md-12 align-self-center">
-                <h3 class="text-themecolor">{{ $user['full_name'] }}'s Profile</h3>
+                <h3 class="text-themecolor">{{ $user->full_name }}'s Profile</h3>
             </div>
         </div>
         
@@ -47,13 +47,13 @@
                                     <div class="row">
                                         <div class="col-md-6 col-xs-12 b-r"> <strong>Phone no</strong>
                                             <br>
-                                            <p class="text-muted"> {{ $user['phone_number'] }}</p>
+                                            <p class="text-muted"> {{ $user->phone_number }}</p>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 col-xs-12 b-r"> <strong>Location</strong>
                                             <br>
-                                            <p class="text-muted"> {{ $user['location'] }}</p>
+                                            <p class="text-muted"> {{ $user->location }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -63,12 +63,12 @@
                     </div>
                 </div>
 
-                @if($user['vaccinations']->count() > 0) 
+                @if($user->vaccinations->count() > 0) 
                     <div class="container-fluid">
                         <div class="card">
                             <div class="card-body">
                                 <ul class="nav nav-tabs profile-tab" role="tablist">
-                                    <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#personal" role="tab">{{ $user['full_name'] }}'s Vaccination Requests <span class="btn btn-rounded btn-sm btn-info waves-effect waves-dark"> {{ $user['vaccinations']->count() }} </span></a> </li>
+                                    <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#personal" role="tab">{{ $user->full_name }}'s Vaccination Requests <span class="btn btn-rounded btn-sm btn-info waves-effect waves-dark"> {{ $user->vaccinations->count() }} </span></a> </li>
                                 </ul>
                                 <div class="table-responsive">
                                     <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
@@ -85,15 +85,21 @@
                                         </thead>
                                         
                                         <tbody>
-                                            @foreach($user['vaccinations'] as $vaccination)
+                                            @foreach($user->vaccinations as $vaccination)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td><a href="{{ route('admin.vaccination.show', ['id' => $vaccination['id']]) }}"><b> {{ $vaccination['transaction_id'] }} </b></a></td>
-                                                    <td>{{ $vaccination['mother'] }}</td>
-                                                    <td>{{ $vaccination['child'] }}</td>
-                                                    <td>{{ $vaccination['dob'] }}</td>
-                                                    <td>{{ $vaccination['created_at'] }}</td>
-                                                    <td><span class="{{ $vaccination['status']['color'] }}"> {{ $vaccination['status']['label'] }} </span> </td>
+                                                    <td>
+                                                        @if($vaccination->transaction_id)
+                                                            <a href="{{ route('admin.vaccination.show', ['id' => $vaccination->id, 'userType' => 'admin']) }}"><b> {{ $vaccination->transaction_id }} </b></a>
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $vaccination->mother }}</td>
+                                                    <td>{{ $vaccination->child }}</td>
+                                                    <td>{{ $vaccination->dob }}</td>
+                                                    <td>{{ $vaccination->created_at }}</td>
+                                                    <td><span class="{{ $vaccination->status['color'] }}"> {{ $vaccination->status['label'] }} </span> </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

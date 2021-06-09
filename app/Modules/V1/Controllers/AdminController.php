@@ -5,10 +5,10 @@ namespace App\Modules\V1\Controllers;
 use App\Exceptions\CustomApiErrorResponseHandler;
 use App\Modules\ApiUtility;
 use App\Modules\V1\Repositories\AdminRepository;
-use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\URL;
 
 class AdminController extends Controller
 {
@@ -19,11 +19,6 @@ class AdminController extends Controller
     {
         $this->request = $request;
         $this->adminRepository = $adminRepository;
-    }
-
-    public function index()
-    {
-        return view('admin.index');
     }
 
     public function dashboard()
@@ -38,8 +33,8 @@ class AdminController extends Controller
         if ($response['status'] == 'success') {
             return redirect()->route('admin.dashboard');
         }
-    
-        return redirect()->route('admin.index')->with('alert-danger', $response['message']);
+        
+        return back()->with('alert-danger', $response['message']);
     }
 
     public function settings()

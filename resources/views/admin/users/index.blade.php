@@ -38,12 +38,12 @@
                                     @foreach($users as $user)
                                         <tr>
                                             <td> {{$loop->iteration}} </td>
-                                            <td> {{ $user['type']}} </td>
-                                            <td><a href="{{ route('admin.user.profile', ['id' => $user['id']]) }}" class="text-info"> {{ $user['full_name']}}</a></td>
-                                            <td><a href="tel:{{ $user['phone_number'] }}">{{ $user['phone_number'] }}</a></td>
-                                            <td> {{ $user['location'] }}</td>
-                                            <td> {{ $user['created_at'] }}</td>
-                                            <td><span class="{{ $user['status']['color'] }}"> {{ $user['status']['label'] }} </span> </td>
+                                            <td> {{ $user->type }} </td>
+                                            <td><a href="{{ route('admin.user.profile', ['id' => $user->id]) }}" class="text-info"> {{ $user->full_name }}</a></td>
+                                            <td><a href="tel:{{ $user->phone_number }}">{{ $user->phone_number }}</a></td>
+                                            <td> {{ $user->location }}</td>
+                                            <td> {{ $user->created_at }}</td>
+                                            <td><span class="{{ $user->status['color'] }}"> {{ $user->status['label'] }} </span> </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

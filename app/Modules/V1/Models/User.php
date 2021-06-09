@@ -2,6 +2,7 @@
 
 namespace App\Modules\V1\Models;
 
+use App\Modules\ApiUtility;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticable;
@@ -59,19 +60,29 @@ class User extends Authenticable
         return self::where('email_address', $email)->first();
     }
 
-    public static function validateUserCredentials($email, $password, $admin = null)
+    public static function validateUserCredentials($username, $password, $admin = false)
     {
         if ($admin) {
             $user = self::where([
                 'role_type' => 'admin',
-                'email_address' => $email
+                'email_address' => $username,
+                'active_status' => ActiveStatus::ACTIVE
             ])->first();
         } else {
-            $user = self::getUserByEmail($email);
+            $user = self::where([
+                'role_type' => 'user',
+                'active_status' => ActiveStatus::ACTIVE
+            ])->where(function ($query) use ($username) {
+                return $query->where('email_address', $username)
+                    ->orWhere('phone_number', $username);
+            })->first();
         }
         
-        if ($user) {
-            return Hash::check($password, $user->password);
+        if ($user && Hash::check($password, $user->password)) {
+            $user->token_expires_at = ApiUtility::next_one_month();
+            $user->save();
+
+            return $user;
         }
 
         return false;
@@ -84,7 +95,7 @@ class User extends Authenticable
         $location = ($city && $state) ? $city.", ".$state : 'N/A';
         
         $vaccinations = $user->vaccinations->map(function ($vaccination) {
-            return VaccinationRequest::resource($vaccination);
+            return (object) VaccinationRequest::resource($vaccination);
         });
 
         return [

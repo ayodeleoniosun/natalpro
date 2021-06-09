@@ -1,7 +1,7 @@
-@extends('admin.includes.app')
+@extends('user.includes.app')
 
 @section('title')
-    Natalpro | All Vaccination Reminder Requests
+    Natalpro | Vaccination Reminder
 @endsection
 
 @section('content') 

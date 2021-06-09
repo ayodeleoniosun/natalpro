@@ -19,18 +19,29 @@ use Illuminate\Support\Facades\DB;
 
 class VaccinationService implements VaccinationRepository
 {
-    public function index()
+    public function index(array $data)
     {
-        $vaccinations = VaccinationRequest::orderBy('id', 'DESC')->get();
-        
+        if ($data['user_type'] === 'admin') {
+            $vaccinations = VaccinationRequest::orderBy('id', 'DESC')->get();
+        } else {
+            $vaccinations = VaccinationRequest::where('user_id', $data['auth_user']->id)->orderBy('id', 'DESC')->get();
+        }
+
         return $vaccinations->map(function ($vaccination) {
-            return VaccinationRequest::resource($vaccination);
+            return (object) VaccinationRequest::resource($vaccination);
         });
     }
 
-    public function show($id)
+    public function show(array $data)
     {
-        $vaccination = VaccinationRequest::find($id);
+        if ($data['user_type'] === 'admin') {
+            $vaccination = VaccinationRequest::find($data['id']);
+        } else {
+            $vaccination = VaccinationRequest::where([
+                'id' => $data['id'],
+                'user_id' => $data['auth_user']->id
+            ])->first();
+        }
         
         if (!$vaccination) {
             return [
@@ -43,7 +54,7 @@ class VaccinationService implements VaccinationRepository
 
         return [
             'status' => 'success',
-            'vaccination' => $vaccination
+            'vaccination' => (object) $vaccination
         ];
     }
 
@@ -104,7 +115,7 @@ class VaccinationService implements VaccinationRepository
             DB::beginTransaction();
 
             if (!$user) {
-                $user = (new UserService)->signUp([
+                $user = app(UserService::class)->signUp([
                     'first_name' => strtolower($data['child']),
                     'last_name' => strtolower($data['mother']),
                     'phone_number' => $data['phone_number'],
@@ -226,6 +237,40 @@ class VaccinationService implements VaccinationRepository
             'samples' => VaccinationSmsSample::where('interval', $interval)->get(),
             'identifier' => $interval,
             'interval' => VaccinationCycle::VACCINATION_CYCLES[$interval]
+        ];
+    }
+
+    public function optOut(array $data)
+    {
+        $vaccination = VaccinationRequest::where([
+            'id' => $data['id'],
+            'user_id' => $data['auth_user']->id,
+            'active_status' => ActiveStatus::ACTIVE
+        ])->first();
+        
+        if (!$vaccination) {
+            return [
+                'status' => 'error',
+                'label' => 'danger',
+                'message' => 'Vaccination request not found or inactive'
+            ];
+        }
+
+        DB::beginTransaction();
+
+        $vaccination->active_status = ActiveStatus::DEACTIVATED;
+        $vaccination->save();
+
+        VaccinationCycle::query()
+            ->where('vaccination_request_id', $vaccination->id)
+            ->update(['active_status' => ActiveStatus::DEACTIVATED]);
+
+        DB::commit();
+
+        return [
+            'status' => 'success',
+            'label' => 'success',
+            'message' => 'Done. You shall no longer receive SMS on this vaccination'
         ];
     }
 }

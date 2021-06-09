@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,39 +21,69 @@ Route::group(
         Route::group(
             ['prefix' => 'vaccination'],
             function () {
-                Route::get('/', 'VaccinationController@add')->name('vaccination.add');
-                Route::get('/payment-success', 'VaccinationController@paymentSuccess')->name('vaccination.payment-success');
-                Route::post('/request', 'VaccinationController@request')->name('vaccination.request');
+                Route::name('vaccination.')->group(function () {
+                    Route::get('/', 'VaccinationController@add')->name('add');
+                    Route::get('/payment-success', 'VaccinationController@paymentSuccess')->name('payment-success');
+                    Route::post('/request', 'VaccinationController@request')->name('request');
+                });
             }
         );
+
+        Route::group(
+            ['prefix' => 'user'],
+            function () {
+                Route::name('user.')->group(function () {
+                    Route::view('/', 'user.index')->name('index');
+                    Route::post('/', 'UserController@login')->name('login');
+
+                    Route::middleware(['check.user.login'])->group(function () {
+                        Route::get('/logout', 'UserController@logout')->name('logout');
+                        
+                        Route::group(
+                            ['prefix' => 'vaccination'],
+                            function () {
+                                Route::get('/{userType}', 'VaccinationController@index')->name('vaccination.index')->where('userType', '[a-zA-Z]+');
+                                Route::get('/{userType}/{id}', 'VaccinationController@show')->name('vaccination.show')->where('userType', '[a-zA-Z]+');
+                                Route::get('/opt-out/{id}', 'VaccinationController@optOut')->name('vaccination.opt-out');
+                            }
+                        );
+                    });
+                });
+            }
+        );
+
 
         //admin routes
         Route::group(
             ['prefix' => 'admin'],
             function () {
-                Route::get('/', 'AdminController@index')->name('admin.index');
-                Route::post('/', 'AdminController@login')->name('admin.login');
-                
-                Route::middleware(['check.admin.login'])->group(function () {
-                    Route::get('/dashboard', 'AdminController@dashboard')->name('admin.dashboard');
-                    Route::get('/settings', 'AdminController@settings')->name('admin.settings.index');
-                    Route::post('/settings', 'AdminController@updateSettings')->name('admin.settings.update');
-                    Route::get('/logout', 'AdminController@logout')->name('admin.logout');
+                Route::name('admin.')->group(function () {
+                    Route::view('/', 'admin.index')->name('index');
+                    Route::post('/', 'AdminController@login')->name('login');
                     
-                    //users
-                    Route::get('/users/{id}', 'UserController@userProfile')->name('admin.user.profile')->where('id', '[0-9]+');
-                    Route::get('/users/{type?}', 'UserController@users')->name('admin.users.type');
-                    
-                    Route::group(
-                        ['prefix' => 'vaccination'],
-                        function () {
-                            Route::get('/', 'VaccinationController@index')->name('admin.vaccination.index');
-                            Route::get('/{id}', 'VaccinationController@show')->name('admin.vaccination.show')->where('id', '[0-9]+');
-                            Route::get('/sms-sample', 'VaccinationController@smsSamples')->name('admin.vaccination.sms-sample.index');
-                            Route::get('/sms-sample/{interval}', 'VaccinationController@viewSmsSamples')->name('admin.vaccination.sms-sample.show');
-                            Route::post('/sms-sample', 'VaccinationController@addSmsSample')->name('admin.vaccination.sms-sample.add');
-                        }
-                    );
+                    Route::middleware(['check.admin.login'])->group(function () {
+                        Route::get('/dashboard', 'AdminController@dashboard')->name('dashboard');
+                        Route::get('/settings', 'AdminController@settings')->name('settings.index');
+                        Route::post('/settings', 'AdminController@updateSettings')->name('settings.update');
+                        Route::get('/logout', 'AdminController@logout')->name('logout');
+                        
+                        //users
+                        Route::get('/users/{id}', 'UserController@userProfile')->name('user.profile');
+                        Route::get('/users/{type?}', 'UserController@users')->name('users.type');
+                        
+                        Route::group(
+                            ['prefix' => 'vaccination'],
+                            function () {
+                                Route::name('vaccination.')->group(function () {
+                                    Route::get('/{userType}', 'VaccinationController@index')->name('index')->where('userType', '[a-zA-Z]+');
+                                    Route::get('/{userType}/{id}', 'VaccinationController@show')->name('show')->where('userType', '[a-zA-Z]+');
+                                    Route::get('/sms-sample', 'VaccinationController@smsSamples')->name('sms-sample.index');
+                                    Route::get('/sms-sample/{interval}', 'VaccinationController@viewSmsSamples')->name('sms-sample.show')->where('interval', '[a-zA-Z]+');
+                                    Route::post('/sms-sample', 'VaccinationController@addSmsSample')->name('sms-sample.add');
+                                });
+                            }
+                        );
+                    });
                 });
             }
         );

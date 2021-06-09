@@ -31,7 +31,7 @@ class UserService implements UserRepository
         }
 
         return $users->map(function ($user) {
-            return User::resource($user);
+            return (object) User::resource($user);
         });
     }
 
@@ -40,7 +40,7 @@ class UserService implements UserRepository
         $user = new User();
         $user->first_name = strtolower($data['first_name']);
         $user->last_name = strtolower($data['last_name']);
-        $user->phone_number = ApiUtility::phoneNumberToDBFormat($data['phone_number']);
+        $user->phone_number = $data['phone_number'];
         $user->email_address = strtolower($data['email_address']);
         $user->is_email_generated = $data['is_email_generated'];
         $user->bearer_token = ApiUtility::generate_bearer_token();
@@ -53,14 +53,15 @@ class UserService implements UserRepository
 
     public function signIn(array $data)
     {
-        if (!User::validateUserCredentials($data['email'], $data['password'])) {
+        $user = User::validateUserCredentials($data['username'], $data['password']);
+        
+        if (!$user) {
             return [
                 'status' => 'error',
                 'message' => 'Incorrect login details'
             ];
         }
 
-        $user = User::getUserByEmail($data['email']);
         session(['user' => $user]);
 
         return [
@@ -81,7 +82,7 @@ class UserService implements UserRepository
             ];
         }
 
-        return User::resource($user);
+        return (object) User::resource($user);
     }
 
     public function changePassword(array $data)

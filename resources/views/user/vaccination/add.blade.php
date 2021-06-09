@@ -72,9 +72,11 @@
                             </div>
                             
                             <button type="submit" id="vaccination_btn" class="btn btn-info btn-block">Submit </button>
-                            
                         </form>
                     </div>
+                    <div style="clear:both"></div>
+                    <br/>
+                    <div class="pull-right"> Already have an account? <a href="{{ route('user.index') }}" class="text-info"> Login here</a> </div>
                 </div>
             </div>
         </div>

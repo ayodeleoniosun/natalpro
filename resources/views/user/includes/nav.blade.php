@@ -14,12 +14,7 @@
 
                 <ul class="navbar-nav mr-auto mt-md-0">
                     
-                    <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
                     
-                    <li class="nav-item m-l-10"> <a class="nav-link sidebartoggler hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
-
-                    <li class="nav-item m-l-10"> <a href="{{ route('admin.settings.index') }}" class="nav-link text-muted waves-effect waves-dark"  data-toggle="tooltip" title="Basic settings"><i class="mdi mdi-settings"></i></a> </li>
-
                 </ul>
 
                 <ul class="navbar-nav my-lg-0">
@@ -48,23 +43,9 @@
 
                     <li> <a class="waves-effect waves-dark" href="http://www.natalpro.org" aria-expanded="false" target="_blank"><i class="mdi mdi-home"></i><span class="hide-menu">Home</span></a></li>
 
-                    <li> <a class="waves-effect waves-dark" href="{{ route('admin.dashboard') }}" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Dashboard</span></a></li>
-
-                    <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-user-circle"></i><span class="hide-menu">Users </span></a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li><a href="{{ route('admin.users.type', ['type' => 'nursing_mothers']) }}">Nursing Mothers</a></li>
-                        </ul>
-                    </li>
-
                     <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-medical-bag"></i><span class="hide-menu">Requests </span></a>
                         <ul aria-expanded="false" class="collapse">
-                            <li><a href="{{ route('admin.vaccination.index', ['userType' => 'admin']) }}">Vaccination Reminders</a></li>
-                        </ul>
-                    </li>
-
-                    <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-email"></i><span class="hide-menu">Vaccination SMS </span></a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li><a href="{{ route('admin.vaccination.sms-sample.index') }}">SMS Samples</a></li>
+                            <li><a href="{{ route('user.vaccination.index', ['userType' => 'user']) }}">Vaccination Reminders</a></li>
                         </ul>
                     </li>
                 </ul>

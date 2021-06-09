@@ -16,6 +16,7 @@
                 <ul class=" navigation-box">
                     <li class="current"><a href="{{ route('index') }}">Home </a></li>
                     <li><a href="{{ route('vaccination.add') }}">Signup for Vaccination </a></li>
+                    <li><a href="{{ route('user.index') }}">Sign In </a></li>
                     <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
                     <li style="display:none">
                         <ul class="submenu">

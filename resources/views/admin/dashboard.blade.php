@@ -16,7 +16,7 @@
             <h2> Welcome back, Administrator  </h2>
             <div class="row">
                 <div class="col-lg-3 col-md-6">
-                    <a href="{{ route('admin.vaccination.index') }}">
+                    <a href="{{ route('admin.vaccination.index', ['userType' => 'admin']) }}">
                         <div class="card btn btn-info">
                             <div class="card-body">
                                 <!-- Row -->
@@ -64,18 +64,18 @@
                         <div class="card card-body">
                             <div class="row">
                                 <div class="col-md-4 col-lg-3 text-center">
-                                    <a href="#">
+                                    <a href="{{ route('admin.user.profile', ['id' => $user->id]) }}" class="text-info">
                                         <img src="{{ URL::asset('/images/avatar.png') }}" class="img-responsive img-circle" style="max-width:100px;max-height:100px"/>
                                     </a>
                                 </div>
                                 <div class="col-md-8 col-lg-9">
                                     <h3 class="box-title m-b-0">
-                                        <a href="#" class="text-info"> {{ $user['full_name'] }} </a>
+                                        <a href="{{ route('admin.user.profile', ['id' => $user->id]) }}" class="text-info"> {{ $user->full_name }} </a>
                                     </h3> <p></p>
-                                    <small> {{ $user['location'] }} </small>
+                                    <small> {{ $user->location }} </small>
                                     <br/> <p></p>
                                     <small> 
-                                        <a href="tel:{{ $user['phone_number'] }}"><i class="fa fa-phone"></i> {{ $user['phone_number'] }} </a> &nbsp; &nbsp; <a href="mailto:{{ $user['email_address'] }}"><i class="fa fa-envelope"></i> {{ $user['email_address'] }} </a>
+                                        <a href="tel:{{ $user->phone_number }}"><i class="fa fa-phone"></i> {{ $user->phone_number }} </a> &nbsp; &nbsp; <a href="mailto:{{ $user->email_address }}"><i class="fa fa-envelope"></i> {{ $user->email_address }} </a>
                                     </small>
                                     
                                 </div>

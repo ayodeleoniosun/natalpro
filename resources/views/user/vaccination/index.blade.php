@@ -1,7 +1,7 @@
-@extends('admin.includes.app')
+@extends('user.includes.app')
 
 @section('title')
-    Natalpro | All Vaccination Reminder Requests
+    Natalpro | My Vaccination Reminder Requests
 @endsection
 
 @section('content') 
@@ -39,13 +39,13 @@
                                     <tr>
                                         <th>S/N</th>
                                         <th>ID</th>
-                                        <th>User</th>
                                         <th>Mother</th>
                                         <th>Child</th>
                                         <th>Phone</th>
                                         <th>DOB</th>
-                                        <th>Date</th>
+                                        <th>Requested On</th>
                                         <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 
@@ -55,18 +55,24 @@
                                             <td>{{ $key += 1 }}</td>
                                             <td>
                                                 @if($vaccination->transaction_id)
-                                                    <a href="{{ route('admin.vaccination.show', ['id' => $vaccination->id, 'userType' => 'admin']) }}"><b> {{ $vaccination->transaction_id }} </b></a>
+                                                    <a href="{{ route('user.vaccination.show', ['id' => $vaccination->id, 'userType' => 'user']) }}"><b> {{ $vaccination->transaction_id }} </b></a>
                                                 @else
                                                     N/A
                                                 @endif
                                             </td>
-                                            <td><a href="{{ route('admin.user.profile', ['id' => $vaccination->user_id]) }}" class="text-info"> {{ $vaccination->user->fullname }} </a></td>
                                             <td>{{ $vaccination->mother }}</td>
                                             <td>{{ $vaccination->child }}</td>
-                                            <td><a href="tel:{{ $vaccination->user->phone_number }}">{{ $vaccination->user->phone_number}}</a></td>
+                                            <td>{{ $vaccination->user->phone_number}}</td>
                                             <td>{{ $vaccination->dob }}</td>
                                             <td>{{ $vaccination->created_at }}</td>
                                             <td><span class="{{ $vaccination->status['color'] }}"> {{ $vaccination->status['label'] }} </span> </td>
+                                            <td>
+                                                @if($vaccination->status['label'] === 'Active') 
+                                                    <a href="{{ route('user.vaccination.opt-out', ['id' => $vaccination->id]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Opting out of this vaccination reminder will stop SMS from being sent to you until you register for another vaccination reminder. \n \n Opt out?')"> Opt out </a>
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

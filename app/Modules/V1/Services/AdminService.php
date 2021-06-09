@@ -2,7 +2,6 @@
 
 namespace App\Modules\V1\Services;
 
-use App\Modules\ApiUtility;
 use App\Modules\V1\Models\Setting;
 use App\Modules\V1\Models\User;
 use App\Modules\V1\Repositories\AdminRepository;
@@ -13,8 +12,11 @@ class AdminService implements AdminRepository
 {
     public function dashboard()
     {
-        $vaccinations = (new VaccinationService)->index();
-        $users = (new UserService)->users();
+        $data = [];
+        $data['user_type'] = 'admin';
+
+        $vaccinations = app(VaccinationService::class)->index($data);
+        $users = app(UserService::class)->users();
         
         return [
             'vaccinations' => $vaccinations,
@@ -24,17 +26,15 @@ class AdminService implements AdminRepository
 
     public function signIn(array $data)
     {
-        if (!User::validateUserCredentials($data['email'], $data['password'], 'admin')) {
+        $user = User::validateUserCredentials($data['username'], $data['password'], true);
+        
+        if (!$user) {
             return [
                 'status' => 'error',
                 'message' => 'Incorrect login details'
             ];
         }
 
-        $user = User::getUserByEmail($data['email']);
-        $user->token_expires_at = ApiUtility::next_one_month();
-        $user->save();
-        
         session(['user' => $user]);
         
         return [

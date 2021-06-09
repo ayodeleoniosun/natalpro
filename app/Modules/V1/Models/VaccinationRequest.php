@@ -60,7 +60,7 @@ class VaccinationRequest extends Model
             'user_id' => $vaccination->user_id,
             'reference_id' => $vaccination->reference_id,
             'transaction_id' => $vaccination->transaction_id,
-            'user' => [
+            'user' => (object) [
                 'fullname' => ucfirst($user->first_name." ".$user->last_name),
                 'email_address' => $user->email_address,
                 'phone_number' => $user->phone_number,

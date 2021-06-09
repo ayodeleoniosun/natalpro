@@ -18,13 +18,24 @@ class UserController extends Controller
         $this->userRepository = $userRepository;
     }
 
+    public function login()
+    {
+        $response = $this->userRepository->signIn($this->request->all());
+
+        if ($response['status'] === 'success') {
+            return redirect()->route('user.vaccination.index', ['userType' => 'user']);
+        }
+    
+        return redirect()->route('user.index')->with('alert-danger', $response['message']);
+    }
+
     public function users(string $type = null)
     {
         $response = $this->userRepository->users($type);
         $users = ['users' => $response];
         return view('admin.users.index', $users);
     }
-
+    
     public function signUp()
     {
         $body = $this->request->all();
@@ -64,12 +75,6 @@ class UserController extends Controller
         }
     
         return $this->userRepository->signUp($body);
-    }
-
-    public function signIn()
-    {
-        $body = $this->request->all();
-        return $this->userRepository->signIn($body);
     }
 
     public function userProfile(int $id)
