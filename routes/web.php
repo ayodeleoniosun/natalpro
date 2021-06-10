@@ -41,6 +41,8 @@ Route::group(
                     Route::post('/', 'UserController@login')->name('login');
 
                     Route::middleware(['check.user.login'])->group(function () {
+                        Route::view('/change-password', 'user.change-password')->name('change-password.index');
+                        Route::post('/change-password', 'UserController@changePassword')->name('change-password.update');
                         Route::get('/logout', 'UserController@logout')->name('logout');
                         
                         Route::group(
@@ -70,7 +72,9 @@ Route::group(
                         Route::get('/settings', 'AdminController@settings')->name('settings.index');
                         Route::post('/settings', 'AdminController@updateSettings')->name('settings.update');
                         Route::get('/logout', 'AdminController@logout')->name('logout');
-                        
+                        Route::view('/change-password', 'admin.change-password')->name('change-password.index');
+                        Route::post('/change-password', 'AdminController@changePassword')->name('change-password.update');
+
                         //users
                         Route::get('/users/{id}', 'UserController@userProfile')->name('user.profile');
                         Route::get('/users/{type?}', 'UserController@users')->name('users.type');
@@ -82,7 +86,7 @@ Route::group(
                                     Route::get('/{userType}', 'VaccinationController@index')->name('index')->where('userType', '[a-zA-Z]+');
                                     Route::get('/{userType}/{id}', 'VaccinationController@show')->name('show')->where('userType', '[a-zA-Z]+');
                                     Route::get('/sms-sample', 'VaccinationController@smsSamples')->name('sms-sample.index');
-                                    Route::get('/sms-sample/{interval}', 'VaccinationController@viewSmsSamples')->name('sms-sample.show')->where('interval', '[a-zA-Z]+');
+                                    Route::get('/sms-sample/{interval}', 'VaccinationController@viewSmsSamples')->name('sms-sample.show');
                                     Route::post('/sms-sample', 'VaccinationController@addSmsSample')->name('sms-sample.add');
                                 });
                             }

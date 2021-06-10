@@ -13,6 +13,4 @@ interface UserRepository
     public function profile(int $id);
 
     public function changePassword(array $data);
-
-    public function updateProfilePicture(array $data);
 }

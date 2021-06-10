@@ -35,7 +35,7 @@ class AdminService implements AdminRepository
             ];
         }
 
-        session(['user' => $user]);
+        session(['admin' => $user]);
         
         return [
             'status' => 'success',
@@ -57,6 +57,7 @@ class AdminService implements AdminRepository
         if (!$settings) {
             return [
                 'status' => 'error',
+                'label' => 'danger',
                 'message' => 'Settings not found.',
             ];
         }
@@ -69,14 +70,21 @@ class AdminService implements AdminRepository
 
             return [
                 'status' => 'success',
+                'label' => 'success',
                 'message' => 'Settings successfully updated',
             ];
         } catch (Exception $e) {
             Log::info("Error while updating settings - ".$e);
             return [
-                'status' => 'success',
+                'status' => 'error',
+                'label' => 'danger',
                 'message' => 'Settings not updated. Try again',
             ];
         }
+    }
+
+    public function updatePassword(array $data)
+    {
+        return app(UserService::class)->changePassword($data);
     }
 }

@@ -24,8 +24,8 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right scale-up">
                             <ul class="dropdown-user">
-                                <li><a href="#" data-toggle="modal" data-toggle="tooltip" title="Change password" data-target="#changePasswordModal"><i class="ti-key"></i> Change Password</a></li>
-                                <li><a href="{{ route('admin.logout') }}" onclick="return confirm('Logout?')"><i class="fa fa-power-off"></i> Logout</a></li>
+                                <li><a href="{{ route('user.change-password.index') }}"><i class="ti-key"></i> Change Password</a></li>
+                                <li><a href="{{ route('user.logout') }}" onclick="return confirm('Logout?')"><i class="fa fa-power-off"></i> Logout</a></li>
                             </ul>
                         </div>
                     </li>
@@ -54,39 +54,3 @@
         </div>
         <!-- End Sidebar scroll-->
     </aside>
-
-    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel1">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="changePasswordModalLabel1">Change Password</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal form-material" id="change_password_form" method="POST" onsubmit="return false">
-                        {{csrf_field()}}
-                        <div class="form-group">
-                            <label for="recipient-name" class="control-label">Current Password</label>
-                            <input type="password" class="form-control" name="current_password">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="recipient-name" class="control-label">New Password</label>
-                            <input type="password" class="form-control" name="new_password">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="recipient-name" class="control-label">Confirm New Password</label>
-                            <input type="password" class="form-control" name="new_password_confirmation">
-                        </div>
-
-                        <div class="modal-footer" style="border:0px">
-                            <div id="change_password_status"></div>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                             <button type="button" id="change_password_btn" onclick="return ajaxFormRequest('#change_password_btn','#change_password_form','/portal/controlling-room-admin/change-password','POST','#change_password_status','Change','no')" class="btn btn-info"><i class="fa fa-check"></i> Change </button>
-                        </div>
-                    </form>
-                </div>    
-            </div>
-        </div>
-    </div>

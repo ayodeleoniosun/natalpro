@@ -92,48 +92,28 @@ class UserService implements UserRepository
         $new_password = $data['new_password'];
         
         if (!Hash::check($current_password, $user->password)) {
-            throw new CustomApiErrorResponseHandler("Incorrect current password.");
+            return [
+                'status' => 'error',
+                'label' => 'danger',
+                'message' => 'Incorrect current password',
+            ];
         }
 
         if ($current_password === $new_password) {
-            throw new CustomApiErrorResponseHandler("Your new password should be different from your current password.");
+            return [
+                'status' => 'error',
+                'label' => 'danger',
+                'message' => 'Your new password should be different from your current password.',
+            ];
         }
         
         $user->password = bcrypt($new_password);
         $user->save();
 
-        return 'Your password was successfully updated.';
-    }
-
-    public function updateProfilePicture(array $data)
-    {
-        $user = $data['auth_user'];
-        $picture = $data['picture'];
-        $size = ceil($picture->getSize()/1024);
-        
-        if ($size > File::MAX_FILESIZE) {
-            throw new CustomApiErrorResponseHandler("Picture should not be more than 5MB.");
-        }
-
-        $user_fullname = $data['auth_user']->first_name." ".$data['auth_user']->last_name;
-        $timestamp = ApiUtility::generateTimeStamp();
-        $filename = "{$timestamp}_{$user_fullname}";
-        $filename = Str::slug($filename, "_");
-        $profile_picture = "{$filename}.{$picture->clientExtension()}";
-
-        Storage::disk('users')->put($profile_picture, file_get_contents($picture->getRealPath()));
-
-        DB::beginTransaction();
-        $file = new File();
-        $file->filename = $filename;
-        $file->type = File::USER_FILE_TYPE;
-        $file->save();
-
-        $user->file_id = $file->id;
-        $user->save();
-        
-        DB::commit();
-
-        return 'Your profile picture was successfully updated.';
+        return [
+            'status' => 'success',
+            'label' => 'success',
+            'message' => 'Password successfully changed. Kindly login again.',
+        ];
     }
 }

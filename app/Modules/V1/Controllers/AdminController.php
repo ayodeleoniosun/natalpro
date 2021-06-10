@@ -61,25 +61,16 @@ class AdminController extends Controller
         );
 
         if ($validator->fails()) {
-            foreach ($validator->errors()->all() as $error) {
-                $validation_errors = [
-                    'status' => 'error',
-                    'label' => 'danger',
-                    'message' => $error
-                ];
-            }
-        
-            if (count($validation_errors) > 0) {
-                return $validation_errors;
-            }
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        return $this->adminRepository->updateSettings($body);
+        $response = $this->adminRepository->updateSettings($body);
+
+        return redirect()->back()->withInput()->with('alert-'.$response['label'], $response['message']);
     }
 
     public function changePassword()
     {
-        ApiUtility::auth_user($this->request);
         $body = $this->request->all();
         
         $validator = Validator::make(
@@ -99,15 +90,22 @@ class AdminController extends Controller
         );
 
         if ($validator->fails()) {
-            throw new CustomApiErrorResponseHandler($validator->errors()->first());
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        return response()->json(['status' => 'success', 'data' => $this->userRepository->changePassword($body)], 200);
+        $response = $this->adminRepository->updatePassword($body);
+
+        if ($response['status'] === 'error') {
+            return redirect()->back()->withInput()->with('alert-danger', $response['message']);
+        }
+
+        $this->request->session()->forget('admin');
+        return redirect()->route('admin.index')->with('alert-success', $response['message']);
     }
 
     public function logout()
     {
-        $this->request->session()->forget('user');
+        $this->request->session()->forget('admin');
         return redirect()->route('admin.index');
     }
 }

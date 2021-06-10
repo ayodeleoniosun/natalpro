@@ -10,5 +10,7 @@ interface AdminRepository
 
     public function updateSettings(array $data);
 
+    public function updatePassword(array $data);
+
     public function signIn(array $data);
 }

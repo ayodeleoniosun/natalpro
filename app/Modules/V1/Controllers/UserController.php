@@ -105,19 +105,22 @@ class UserController extends Controller
         );
 
         if ($validator->fails()) {
-            foreach ($validator->errors()->all() as $error) {
-                $validation_errors = [
-                    'status' => 'error',
-                    'label' => 'danger',
-                    'message' => $error
-                ];
-            }
-        
-            if (count($validation_errors) > 0) {
-                return $validation_errors;
-            }
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        return $this->userRepository->changePassword($body);
+        $response = $this->userRepository->changePassword($body);
+
+        if ($response['status'] === 'error') {
+            return redirect()->back()->withInput()->with('alert-danger', $response['message']);
+        }
+
+        $this->request->session()->forget('user');
+        return redirect()->route('user.index')->with('alert-success', $response['message']);
+    }
+
+    public function logout()
+    {
+        $this->request->session()->forget('user');
+        return redirect()->route('user.index');
     }
 }
