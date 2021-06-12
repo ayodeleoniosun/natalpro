@@ -2,13 +2,11 @@
 
 namespace App\Modules\V1\Controllers;
 
-use App\Exceptions\CustomApiErrorResponseHandler;
-use App\Modules\ApiUtility;
-use App\Modules\V1\Models\VaccinationCycle;
 use App\Modules\V1\Repositories\VaccinationRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class VaccinationController extends Controller
 {
@@ -73,17 +71,11 @@ class VaccinationController extends Controller
             [
                 'transaction_id' => 'required|string',
                 'tx_ref' => 'required|string',
-            ],
-            [
-                'transaction_id.required' => 'Transaction ID is required',
-                'tx_ref.required' => 'Reference ID is required',
             ]
         );
 
         if ($validator->fails()) {
-            foreach ($validator->errors()->all() as $error) {
-                return redirect()->route('vaccination.add')->with('alert-danger', $error);
-            }
+            return redirect()->route('vaccination.add')->withErrors($validator);
         }
 
         $transaction_id = $this->request->input('transaction_id');
@@ -97,31 +89,26 @@ class VaccinationController extends Controller
     public function request()
     {
         $body = $this->request->all();
-        
+        Log::emergency('An informational message');
+
         $validator = Validator::make(
             $body,
             [
-                'phone_number' => 'required|string',
+                'phone_number' => 'required|string|unique:user,phone_number|between:10,15',
                 'mother' => 'required|string',
                 'child' => 'required|string',
                 'dob' => 'required|string',
-                'gender' => 'required|string',
+                'gender' => [
+                    'required',
+                    'string',
+                    Rule::in(['male', 'female'])
+                ],
                 'language' => 'required|string'
-            ],
-            [
-                'phone_number.required' => 'Phone number is required',
-                'mother.required' => 'Mother\'s name is required',
-                'child.required' => 'Child\'s name is required',
-                'dob.required' => 'Child\'s date of birth is required',
-                'language.required' => 'Kindly select the language you want SMS to be sent with',
-                'gender.required' => 'Child\'s gender is required'
             ]
         );
 
         if ($validator->fails()) {
-            foreach ($validator->errors()->all() as $error) {
-                return redirect()->back()->withInput()->with('alert-danger', $error);
-            }
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $response = $this->vaccinationRepository->request($body);

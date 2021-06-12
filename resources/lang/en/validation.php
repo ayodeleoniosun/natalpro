@@ -24,12 +24,12 @@ return [
     'before' => 'The :attribute must be a date before :date.',
     'before_or_equal' => 'The :attribute must be a date before or equal to :date.',
     'between' => [
-        'numeric' => 'The :attribute must be between :min and :max.',
-        'file' => 'The :attribute must be between :min and :max kilobytes.',
-        'string' => 'The :attribute must be between :min and :max characters.',
-        'array' => 'The :attribute must have between :min and :max items.',
+        'numeric' => ':attribute must be between :min and :max.',
+        'file' => ':attribute must be between :min and :max kilobytes.',
+        'string' => ':attribute must be between :min and :max characters.',
+        'array' => ':attribute must have between :min and :max items.',
     ],
-    'boolean' => 'The :attribute field must be true or false.',
+    'boolean' => ':attribute must be true or false.',
     'confirmed' => 'The :attribute confirmation does not match.',
     'date' => 'The :attribute is not a valid date.',
     'date_equals' => 'The :attribute must be a date equal to :date.',
@@ -38,12 +38,12 @@ return [
     'digits' => 'The :attribute must be :digits digits.',
     'digits_between' => 'The :attribute must be between :min and :max digits.',
     'dimensions' => 'The :attribute has invalid image dimensions.',
-    'distinct' => 'The :attribute field has a duplicate value.',
+    'distinct' => ':attribute has a duplicate value.',
     'email' => 'The :attribute must be a valid email address.',
     'ends_with' => 'The :attribute must end with one of the following: :values.',
     'exists' => 'The selected :attribute is invalid.',
     'file' => 'The :attribute must be a file.',
-    'filled' => 'The :attribute field must have a value.',
+    'filled' => ':attribute must have a value.',
     'gt' => [
         'numeric' => 'The :attribute must be greater than :value.',
         'file' => 'The :attribute must be greater than :value kilobytes.',
@@ -58,7 +58,7 @@ return [
     ],
     'image' => 'The :attribute must be an image.',
     'in' => 'The selected :attribute is invalid.',
-    'in_array' => 'The :attribute field does not exist in :other.',
+    'in_array' => ':attribute does not exist in :other.',
     'integer' => 'The :attribute must be an integer.',
     'ip' => 'The :attribute must be a valid IP address.',
     'ipv4' => 'The :attribute must be a valid IPv4 address.',
@@ -95,15 +95,15 @@ return [
     'not_regex' => 'The :attribute format is invalid.',
     'numeric' => 'The :attribute must be a number.',
     'password' => 'The password is incorrect.',
-    'present' => 'The :attribute field must be present.',
+    'present' => ':attribute must be present.',
     'regex' => 'The :attribute format is invalid.',
-    'required' => 'The :attribute field is required.',
-    'required_if' => 'The :attribute field is required when :other is :value.',
-    'required_unless' => 'The :attribute field is required unless :other is in :values.',
-    'required_with' => 'The :attribute field is required when :values is present.',
-    'required_with_all' => 'The :attribute field is required when :values are present.',
-    'required_without' => 'The :attribute field is required when :values is not present.',
-    'required_without_all' => 'The :attribute field is required when none of :values are present.',
+    'required' => ':attribute is required.',
+    'required_if' => ':attribute is required when :other is :value.',
+    'required_unless' => ':attribute is required unless :other is in :values.',
+    'required_with' => ':attribute is required when :values is present.',
+    'required_with_all' => ':attribute is required when :values are present.',
+    'required_without' => ':attribute is required when :values is not present.',
+    'required_without_all' => ':attribute is required when none of :values are present.',
     'same' => 'The :attribute and :other must match.',
     'size' => [
         'numeric' => 'The :attribute must be :size.',
@@ -131,9 +131,9 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
+        'language' => [
+            'required' => 'Kindly select the language you want SMS to be sent with'
+        ]
     ],
 
     /*
@@ -147,6 +147,20 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'phone_number' => 'Phone number',
+        'mother' => 'Mother\'s name',
+        'child' => 'Child\'s name',
+        'dob' => 'Child\'s date of birth',
+        'gender' => 'Child\'s gender',
+        'transaction_id' => 'Transaction ID',
+        'tx_ref' => 'Reference ID',
+        'vaccination_amount' => 'Vaccination amount',
+        'kit_amount' => 'Kit amount',
+        'welcome_message' => 'Welcome message',
+        'current_password' => 'Current password',
+        'new_password' => 'New password',
+        'new_password_confirmation' => 'New password confirmation'
+    ],
 
 ];

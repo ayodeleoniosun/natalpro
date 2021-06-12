@@ -47,16 +47,7 @@ class UserController extends Controller
                 'last_name' => 'required|string',
                 'email_address' => 'required|email|string',
                 'password' => 'required|string|min:6',
-                'phone_number' => 'required|string|min:10|max:15'
-            ],
-            [
-                'first_name.required' => 'Firstname is required',
-                'last_name.required' => 'Lastname is required',
-                'email_address.required' => 'Email address is required',
-                'password.required' => 'Password is required',
-                'phone_number.required' => 'Phone number is required',
-                'phone_number.min' => 'Phone number should be a minium of 10 characters',
-                'phone_number.max' => 'Phone number should be a maximum of 15 characters',
+                'phone_number' => 'required|string|unique:user,phone_number|min:10|max:15'
             ]
         );
 
@@ -92,15 +83,8 @@ class UserController extends Controller
             $body,
             [
                 'current_password' => 'required|string',
-                'new_password' => 'required|string|min:6',
-                'new_password_confirmation' => 'required|string|min:6|same:new_password',
-            ],
-            [
-                'current_password.required' => 'Current password is required',
-                'new_password.required' => 'New password is required',
-                'new_password_confirmation.required' => 'Retype the new password',
-                'new_password.min' => 'New password should be a minimum of 6 characters',
-                'phone_number.same' => 'New password must be the same with new password confirmation',
+                'new_password' => 'required|string|min:6|different:current_password',
+                'new_password_confirmation' => 'required|string|same:new_password',
             ]
         );
 

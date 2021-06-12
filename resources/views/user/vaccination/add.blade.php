@@ -39,36 +39,56 @@
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">Mother's name</label>
                                 <input type="text" class="form-control" name="mother" value="{{ old('mother') }}"/>
+                                @error('mother')
+                                    <div class="text-danger"> {{ $message }} </div>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">Child's name</label>
                                 <input type="text" class="form-control" name="child" value="{{ old('child') }}"/>
+                                @error('child')
+                                    <div class="text-danger"> {{ $message }} </div>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">Phone number (<small> This is where sms will be sent to per intervals</small>)</label>
                                 <input type="text" class="form-control" name="phone_number" value="{{ old('phone_number') }}"/>
+                                @error('phone_number')
+                                    <div class="text-danger"> {{ $message }} </div>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">Child's Date of birth</label>
                                 <input type="date" class="form-control" name="dob"  value="{{ old('dob') }}"/>
+                                @error('dob')
+                                    <div class="text-danger"> {{ $message }} </div>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">Child's Gender</label>
                                 <select name="gender" class="form-control">
+                                    <option value="" disabled> -- Select gender -- </option>
                                     @foreach ($genders as $gender) 
                                         <option value="{{ $gender }}" @if( old('gender')  == $gender) selected="selected" @endif> {{ ucfirst($gender) }} </option>
                                     @endforeach
                                 </select>
+                                @error('gender')
+                                    <div class="text-danger"> {{ $message }} </div>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label class="control-label">Language to receive SMS with</label>
                                 <select name="language" class="form-control" >
+                                    <option value="" disabled> -- Select language -- </option>
                                     @foreach ($languages as $language) 
                                         <option value="{{ $language }}" @if( old('language')  == $language) selected="selected" @endif> {{ ucfirst($language) }} </option>
                                     @endforeach
                                 </select>
+                                @error('language')
+                                    <div class="text-danger"> {{ $message }} </div>
+                                @enderror
                             </div>
                             
                             <button type="submit" id="vaccination_btn" class="btn btn-info btn-block">Submit </button>

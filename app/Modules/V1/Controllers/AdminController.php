@@ -29,8 +29,8 @@ class AdminController extends Controller
     public function login()
     {
         $response = $this->adminRepository->signIn($this->request->all());
-    
-        if ($response['status'] == 'success') {
+        
+        if ($response['status'] === 'success') {
             return redirect()->route('admin.dashboard');
         }
         
@@ -52,11 +52,6 @@ class AdminController extends Controller
                 'vaccination_amount' => 'required|string',
                 'kit_amount' => 'required|string',
                 'welcome_message' => 'required|string',
-            ],
-            [
-                'vaccination_amount.required' => 'Vaccination amount is required',
-                'kit_amount.required' => 'Kit amount is required',
-                'welcome_message.required' => 'Welcome message is required'
             ]
         );
 
@@ -77,15 +72,8 @@ class AdminController extends Controller
             $body,
             [
                 'current_password' => 'required|string',
-                'new_password' => 'required|string|min:6',
-                'new_password_confirmation' => 'required|string|min:6|same:new_password',
-            ],
-            [
-                'current_password.required' => 'Current password is required',
-                'new_password.required' => 'New password is required',
-                'new_password_confirmation.required' => 'Retype the new password',
-                'new_password.min' => 'New password should be a minimum of 6 characters',
-                'phone_number.same' => 'New password must be the same with new password confirmation',
+                'new_password' => 'required|string|min:6|different:current_password',
+                'new_password_confirmation' => 'required|string|same:new_password',
             ]
         );
 

@@ -99,14 +99,6 @@ class UserService implements UserRepository
             ];
         }
 
-        if ($current_password === $new_password) {
-            return [
-                'status' => 'error',
-                'label' => 'danger',
-                'message' => 'Your new password should be different from your current password.',
-            ];
-        }
-        
         $user->password = bcrypt($new_password);
         $user->save();
 

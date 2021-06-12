@@ -98,19 +98,6 @@ class VaccinationService implements VaccinationRepository
             ];
         }
 
-        $phone_number_exists = User::where([
-            'phone_number' => ApiUtility::phoneNumberToDBFormat($data['phone_number']),
-            'active_status' => ActiveStatus::ACTIVE
-        ])->exists();
-
-        if ($phone_number_exists) {
-            return [
-                'status' => 'error',
-                'label' => 'danger',
-                'message' => 'User with this phone number exist. Kindly use a different phone number'
-            ];
-        }
-        
         try {
             DB::beginTransaction();
 

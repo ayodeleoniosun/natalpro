@@ -2,13 +2,11 @@
 
 namespace App\Modules\V1\Middleware;
 
-use App\Modules\ApiUtility;
 use App\Modules\V1\Models\ActiveStatus;
 use App\Modules\V1\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Redirect;
 
 class CheckAdminLogin
 {
@@ -22,7 +20,7 @@ class CheckAdminLogin
     public function handle(Request $request, Closure $next)
     {
         $now = Carbon::now()->toDateTimeString();
-        $session = session('user');
+        $session = session('admin');
             
         if ($session) {
             $admin = User::where([
