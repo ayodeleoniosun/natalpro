@@ -40,7 +40,7 @@ class UserService implements UserRepository
         $user = new User();
         $user->first_name = strtolower($data['first_name']);
         $user->last_name = strtolower($data['last_name']);
-        $user->phone_number = $data['phone_number'];
+        $user->phone_number = ApiUtility::phoneNumberToDBFormat($data['phone_number']);
         $user->email_address = strtolower($data['email_address']);
         $user->is_email_generated = $data['is_email_generated'];
         $user->bearer_token = ApiUtility::generate_bearer_token();

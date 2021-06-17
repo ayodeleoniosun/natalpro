@@ -24,10 +24,9 @@
                         <img src="{{ URL::asset('assets/images/logo-icon.png')}}" alt="homepage" class="dark-logo" class="img-responsive img-thumbnail"/>
                     </div>
                     <br/>
-                    <form class="form-horizontal" action="{{ route('admin.login') }}" method="post">
-                        {{csrf_field()}}
-                        <h3 class="box-title m-b-20" align="center">Admin Login</h3>
-                        <div class="flash-message">
+                    <h3 class="box-title m-b-20" align="center">Admin Login</h3>
+                    
+                    <div class="flash-message">
                         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                             @if(Session('alert-' . $msg))
                                 <div class="container">
@@ -42,6 +41,9 @@
                         @endforeach
                     </div>
 
+                    <form class="form-horizontal" action="{{ route('admin.login') }}" method="post">
+                        {{csrf_field()}}
+                        
                         <div class="form-group ">
                             <div class="col-xs-12">
                             <input class="form-control" type="email" name="username" required="" placeholder="Email address"> </div>

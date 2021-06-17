@@ -66,11 +66,11 @@ class VaccinationService implements VaccinationRepository
         if (!isset($data['email_address']) || empty($data['email_address'])) {
             $currentTime = Carbon::now();
             $date = $currentTime->toArray();
-            $email_address = $fullname."_".$date['micro']."@gmail.com";
+            $email_address = ApiUtility::generateRandomEmail();
             $user = User::getUserByEmail($email_address);
             
             while ($user) {
-                $email_address = $fullname."_".$date['micro']."@gmail.com";
+                $email_address = ApiUtility::generateRandomEmail();
             }
 
             $is_email_generated = true;
@@ -84,7 +84,7 @@ class VaccinationService implements VaccinationRepository
             return [
                 'status' => 'error',
                 'label' => 'danger',
-                'message' => 'Please enter a valid email address'
+                'message' => 'Invalid email address'
             ];
         }
         
@@ -107,7 +107,7 @@ class VaccinationService implements VaccinationRepository
                     'last_name' => strtolower($data['mother']),
                     'phone_number' => $data['phone_number'],
                     'email_address' => $email_address,
-                    'password' => "natalpro".strtolower($data['mother']),
+                    'password' => ApiUtility::phoneNumberToDBFormat($data['phone_number']),
                     'is_email_generated' => $is_email_generated
                 ]);
             }
@@ -155,32 +155,35 @@ class VaccinationService implements VaccinationRepository
             if ($vaccination_request->active_status == ActiveStatus::PENDING) {
                 DB::beginTransaction();
 
-                $user = User::find($vaccination_request->user_id);
-                
-                VaccinationRequest::generateVaccinationCycles($vaccination_request);
-
-                $welcome_message = VaccinationSmsSample::where([
-                    'language' => $vaccination_request->language,
-                    'interval' => VaccinationInterval::AT_BIRTH,
-                    'active_status' => ActiveStatus::ACTIVE
-                ])->value('sms');
-
                 $vaccination_request->transaction_id = $transaction_id;
                 $vaccination_request->active_status = ActiveStatus::ACTIVE;
                 $vaccination_request->amount = $transaction->data->amount;
                 $vaccination_request->save();
 
+                VaccinationRequest::generateVaccinationCycles($vaccination_request);
+                
                 VaccinationCycle::where([
                     'vaccination_request_id' => $vaccination_request->id,
                     'interval' => VaccinationInterval::AT_BIRTH,
                 ])->update(['active_status' => ActiveStatus::DEACTIVATED]);
-
-                $status = app(SmsHandler::class)->SendSms($user->phone_number, $welcome_message);
-                Log::info("Vaccination Welcome SMS to ".$user->phone_number." = ". $status);
-
                 
                 DB::commit();
 
+                $user = User::find($vaccination_request->user_id);
+                
+                $welcome_message = VaccinationSmsSample::where([
+                    'language' => $vaccination_request->language,
+                    'interval' => VaccinationInterval::AT_BIRTH,
+                    'active_status' => ActiveStatus::ACTIVE
+                ])->value('sms');
+                
+                $welcome_message.="\nYour login details are as follow:\n";
+                $welcome_message.="Phone number - ".$user->phone_number."\n";
+                $welcome_message.="Password - ".$user->phone_number."\n";
+                
+                $status = app(SmsHandler::class)->SendSms($user->phone_number, $welcome_message);
+                Log::info("Vaccination Welcome SMS to ".$user->phone_number." = ". $status);
+                
                 return [
                     'status' => 'success',
                     'label' => 'success',

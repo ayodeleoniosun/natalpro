@@ -23,6 +23,11 @@ class ApiUtility
         return true;
     }
 
+    public static function generateRandomEmail()
+    {
+        return "user_" . strtolower(bin2hex(openssl_random_pseudo_bytes(4))) . "@gmail.com";
+    }
+
     public static function generate_bearer_token()
     {
         return bin2hex(openssl_random_pseudo_bytes(32));
