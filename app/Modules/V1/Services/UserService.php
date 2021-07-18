@@ -2,16 +2,11 @@
 
 namespace App\Modules\V1\Services;
 
-use App\Exceptions\CustomApiErrorResponseHandler;
 use App\Modules\ApiUtility;
 use App\Modules\V1\Models\ActiveStatus;
-use App\Modules\V1\Models\File;
 use App\Modules\V1\Models\User;
 use App\Modules\V1\Repositories\UserRepository;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class UserService implements UserRepository
 {

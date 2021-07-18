@@ -14,14 +14,14 @@ class VaccinationRequest extends Model
     protected $table = 'vaccination_request';
 
     protected $fillable = [
-        'reference_id',
+        'invoice_id',
         'user_id',
         'mother',
         'child',
         'dob',
         'language',
         'gender',
-        'amount'
+        'active_status'
     ];
 
     public function user()

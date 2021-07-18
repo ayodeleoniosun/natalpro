@@ -2,10 +2,15 @@
 
 namespace App\Modules\V1\Services;
 
+use App\Modules\V1\Models\City;
+use App\Modules\V1\Models\Role;
 use App\Modules\V1\Models\Setting;
 use App\Modules\V1\Models\User;
+use App\Modules\V1\Models\VaccinationCycle;
 use App\Modules\V1\Repositories\AdminRepository;
 use Exception;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class AdminService implements AdminRepository
@@ -26,6 +31,11 @@ class AdminService implements AdminRepository
 
     public function signIn(array $data)
     {
+        Cache::tags(['users'])->put('John', 'Doe');
+
+        $users = Cache::tags(['users'])->get('John');
+        dd($users);
+
         $user = User::validateUserCredentials($data['username'], $data['password'], true);
         
         if (!$user) {

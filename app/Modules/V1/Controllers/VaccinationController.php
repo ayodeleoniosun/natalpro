@@ -4,7 +4,6 @@ namespace App\Modules\V1\Controllers;
 
 use App\Modules\V1\Repositories\VaccinationRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -89,8 +88,7 @@ class VaccinationController extends Controller
     public function request()
     {
         $body = $this->request->all();
-        Log::emergency('An informational message');
-
+        
         $validator = Validator::make(
             $body,
             [

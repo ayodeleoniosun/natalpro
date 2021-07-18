@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVaccinationRequestTable extends Migration
+class CreateRoleToUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,14 @@ class CreateVaccinationRequestTable extends Migration
      */
     public function up()
     {
-        Schema::create('vaccination_request', function (Blueprint $table) {
+        Schema::create('role_to_user', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('reference_id');
-            $table->string('transaction_id')->nullable();
+            $table->unsignedInteger('role_id');
             $table->unsignedInteger('user_id');
-            $table->enum('language', ['english', 'yoruba', 'hausa', 'igbo'])->default('english');
-            $table->string('mother');
-            $table->string('child');
-            $table->string('dob');
-            $table->string('gender');
-            $table->string('amount')->nullable();
             $table->timestamps();
             $table->unsignedInteger('active_status')->default(1);
 
+            $table->foreign('role_id')->references('id')->on('role');
             $table->foreign('user_id')->references('id')->on('user');
             $table->foreign('active_status')->references('id')->on('active_status');
         });
@@ -39,6 +33,6 @@ class CreateVaccinationRequestTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vaccination_request');
+        Schema::dropIfExists('role_to_user');
     }
 }

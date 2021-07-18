@@ -18,19 +18,17 @@ class Flutterwave
         $this->base_url = 'https://api.flutterwave.com/v3/payments';
     }
     
-    public function vaccinationPayment($user, $transaction_ref)
+    public function vaccinationPayment($user, $price, $transaction_ref)
     {
         if (empty(env('FLUTTERWAVE_SECRET_KEY'))) {
             return;
         }
 
         try {
-            $vaccination_amount = Setting::where('id', 1)->value('vaccination_amount');
-            
             $response = $this->client->post($this->base_url, [
                 'json' => [
                     'tx_ref' => $transaction_ref,
-                    'amount' => $vaccination_amount,
+                    'amount' => $price,
                     'currency' => 'NGN',
                     'redirect_url' => env('VACCINATION_WEBHOOK_URL'),
                     'payment_options' => 'card',

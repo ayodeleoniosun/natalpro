@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(
-    ['namespace' => 'App\Modules\V1\Controllers'],
+    [
+    'namespace' => 'App\Modules\V1\Controllers'],
     function () {
         Route::get('/debug', function () {
             throw new Exception('My first Sentry error!');

@@ -7,6 +7,10 @@ use App\Handlers\Flutterwave;
 use App\Modules\ApiUtility;
 use App\Modules\V1\Enum\VaccinationInterval;
 use App\Modules\V1\Models\ActiveStatus;
+use App\Modules\V1\Models\Invoice;
+use App\Modules\V1\Models\Payment;
+use App\Modules\V1\Models\PaymentStatus;
+use App\Modules\V1\Models\PaymentType;
 use App\Modules\V1\Models\Setting;
 use App\Modules\V1\Models\User;
 use App\Modules\V1\Models\VaccinationCycle;
@@ -60,12 +64,9 @@ class VaccinationService implements VaccinationRepository
 
     public function request(array $data)
     {
-        $fullname = strtolower($data['child'])."_".strtolower($data['mother']);
         $is_email_generated = false;
-        
+
         if (!isset($data['email_address']) || empty($data['email_address'])) {
-            $currentTime = Carbon::now();
-            $date = $currentTime->toArray();
             $email_address = ApiUtility::generateRandomEmail();
             $user = User::getUserByEmail($email_address);
             
@@ -101,34 +102,48 @@ class VaccinationService implements VaccinationRepository
         try {
             DB::beginTransaction();
 
-            if (!$user) {
-                $user = app(UserService::class)->signUp([
-                    'first_name' => strtolower($data['child']),
-                    'last_name' => strtolower($data['mother']),
-                    'phone_number' => $data['phone_number'],
-                    'email_address' => $email_address,
-                    'password' => ApiUtility::phoneNumberToDBFormat($data['phone_number']),
-                    'is_email_generated' => $is_email_generated
-                ]);
-            }
+            $user = app(UserService::class)->signUp([
+                'first_name' => strtolower($data['child']),
+                'last_name' => strtolower($data['mother']),
+                'phone_number' => $data['phone_number'],
+                'email_address' => $email_address,
+                'password' => ApiUtility::phoneNumberToDBFormat($data['phone_number']),
+                'is_email_generated' => $is_email_generated
+            ]);
+        
+            $reference_code = ApiUtility::generateTransactionReference();
+            $vaccination_amount = Setting::where('id', 1)->value('vaccination_amount');
+            
+            $payment = Payment::create([
+                'payment_type_id' => PaymentType::FLUTTERWAVE,
+                'payment_status_id' => PaymentStatus::NO_PAYMENT,
+                'description' => 'Payment of vaccination reminder for '.strtolower($data['child']),
+                'active_status' => ActiveStatus::PENDING
+            ]);
+            
+            $invoice = Invoice::create([
+                'reference_code' => $reference_code,
+                'user_id' => $user->id,
+                'payment_id' => $payment->id,
+                'price' => $vaccination_amount,
+                'description' => 'Payment of vaccination reminder for '.strtolower($data['child']),
+                'active_status' => ActiveStatus::PENDING
+            ]);
 
-            if ($user) {
-                $vaccination = VaccinationRequest::create([
-                    'reference_id' => 'tx-'.ApiUtility::generateTransactionReference(),
-                    'user_id' => $user->id,
-                    'mother' => strtolower($data['mother']),
-                    'child' => strtolower($data['child']),
-                    'dob' => $data['dob'],
-                    'language' => strtolower($data['language']),
-                    'gender' => strtolower($data['gender'])
-                ]);
-
-                VaccinationRequest::where('id', $vaccination->id)->update(['active_status' => ActiveStatus::PENDING]);
-            }
+            VaccinationRequest::create([
+                'invoice_id' => $invoice->id,
+                'user_id' => $user->id,
+                'mother' => strtolower($data['mother']),
+                'child' => strtolower($data['child']),
+                'dob' => $data['dob'],
+                'language' => strtolower($data['language']),
+                'gender' => strtolower($data['gender']),
+                'active_status' => ActiveStatus::PENDING
+            ]);
 
             DB::commit();
 
-            $payment = app(Flutterwave::class)->vaccinationPayment($user, $vaccination->reference_id);
+            $payment = app(Flutterwave::class)->vaccinationPayment($user, $vaccination_amount, $reference_code);
             
             return [
                 'status' => 'success',
@@ -150,52 +165,74 @@ class VaccinationService implements VaccinationRepository
         $transaction = app(Flutterwave::class)->verify($transaction_id);
         
         if ($transaction->status == 'success') {
-            $vaccination_request = VaccinationRequest::where('reference_id', $transaction->data->tx_ref)->first();
+            $invoice = Invoice::where([
+                'reference_code' => $transaction->data->tx_ref,
+                'active_status' => ActiveStatus::PENDING
+            ])->first();
 
-            if ($vaccination_request->active_status == ActiveStatus::PENDING) {
-                DB::beginTransaction();
-
-                $vaccination_request->transaction_id = $transaction_id;
-                $vaccination_request->active_status = ActiveStatus::ACTIVE;
-                $vaccination_request->amount = $transaction->data->amount;
-                $vaccination_request->save();
-
-                VaccinationRequest::generateVaccinationCycles($vaccination_request);
-                
-                VaccinationCycle::where([
-                    'vaccination_request_id' => $vaccination_request->id,
-                    'interval' => VaccinationInterval::AT_BIRTH,
-                ])->update(['active_status' => ActiveStatus::DEACTIVATED]);
-                
-                DB::commit();
-
-                $user = User::find($vaccination_request->user_id);
-                
-                $welcome_message = VaccinationSmsSample::where([
-                    'language' => $vaccination_request->language,
-                    'interval' => VaccinationInterval::AT_BIRTH,
-                    'active_status' => ActiveStatus::ACTIVE
-                ])->value('sms');
-                
-                $welcome_message.="\nYour login details are as follow:\n";
-                $welcome_message.="Phone number - ".$user->phone_number."\n";
-                $welcome_message.="Password - ".$user->phone_number."\n";
-                
-                $status = app(SmsHandler::class)->SendSms($user->phone_number, $welcome_message);
-                Log::info("Vaccination Welcome SMS to ".$user->phone_number." = ". $status);
-                
-                return [
-                    'status' => 'success',
-                    'label' => 'success',
-                    'message' => 'Vaccination request successfully submitted.'
-                ];
-            } else {
+            if (!$invoice) {
                 return [
                     'status' => 'error',
                     'label' => 'danger',
-                    'message' => 'Vaccination request already approved.'
+                    'message' => 'Invoice does not exist.'
                 ];
             }
+
+            $vaccination_request = VaccinationRequest::where([
+                'invoice_id' => $invoice->id,
+                'active_status' => ActiveStatus::PENDING
+            ])->first();
+
+            if (!$vaccination_request) {
+                return [
+                    'status' => 'error',
+                    'label' => 'danger',
+                    'message' => 'Vaccination request does not exist.'
+                ];
+            }
+
+            DB::beginTransaction();
+
+            $vaccination_request->active_status = ActiveStatus::ACTIVE;
+            $vaccination_request->save();
+
+            $payment = Payment::find($invoice->payment_id);
+            $payment->payment_status_id = PaymentStatus::PAID;
+            $payment->active_status = ActiveStatus::ACTIVE;
+            $payment->save();
+
+            $invoice->active_status = ActiveStatus::ACTIVE;
+            $invoice->save();
+
+            VaccinationRequest::generateVaccinationCycles($vaccination_request);
+            
+            VaccinationCycle::where([
+                'vaccination_request_id' => $vaccination_request->id,
+                'interval' => VaccinationInterval::AT_BIRTH,
+            ])->update(['active_status' => ActiveStatus::DEACTIVATED]);
+            
+            DB::commit();
+
+            $user = User::find($vaccination_request->user_id);
+            
+            $welcome_message = VaccinationSmsSample::where([
+                'language' => $vaccination_request->language,
+                'interval' => VaccinationInterval::AT_BIRTH,
+                'active_status' => ActiveStatus::ACTIVE
+            ])->value('sms');
+            
+            $welcome_message.="\nYour login details are as follow:\n";
+            $welcome_message.="Phone number - ".$user->phone_number."\n";
+            $welcome_message.="Password - ".$user->phone_number."\n";
+            
+            $status = app(SmsHandler::class)->SendSms($user->phone_number, $welcome_message);
+            Log::info("Vaccination Welcome SMS to ".$user->phone_number." = ". $status);
+            
+            return [
+                'status' => 'success',
+                'label' => 'success',
+                'message' => 'Vaccination request successfully submitted.'
+            ];
         }
 
         return [

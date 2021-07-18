@@ -9,18 +9,20 @@ use Illuminate\Foundation\Auth\User as Authenticable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 
-class User extends Authenticable
+class Invoice extends Authenticable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'user';
-    
-    protected $hidden = [
-        'password',
-        'token_expires_at'
-    ];
+    protected $table = 'invoice';
 
-    protected $fillable = ['first_name', 'last_name', 'email_address', 'phone_number', 'password'];
+    protected $fillable = [
+        'user_id',
+        'reference_code',
+        'price',
+        'payment_id',
+        'description',
+        'active_status'
+    ];
 
     public const USER_TYPES = ['nursing_mother', 'pregnant_women', 'healthcare_professional'];
 
