@@ -30,14 +30,6 @@ class User extends Authenticable
         'token_expires_at'
     ];
 
-    public const USER_TYPES = ['nursing_mother', 'pregnant_women', 'healthcare_professional'];
-
-    public const USER_TYPE = [
-        'nursing_mother' => 'Nursing Mother',
-        'pregnant_women' => 'Pregnant Women',
-        'healthcare_professional' => 'Healthcare Professional'
-    ];
-
     const SUPER_ADMIN = 1;
 
     public function getFullNameAttribute()
@@ -70,6 +62,11 @@ class User extends Authenticable
         return $this->hasMany(VaccinationRequest::class, 'user_id');
     }
 
+    public function natalType()
+    {
+        return $this->hasOne(UserToNatalType::class, 'user_id');
+    }
+
     public function vaccinationCycles()
     {
         return $this->hasManyThrough(VaccinationCycle::class, VaccinationRequest::class);
@@ -90,20 +87,20 @@ class User extends Authenticable
     {
         if ($admin) {
             $user = self::where([
-                'role_type' => 'admin',
                 'email_address' => $username,
                 'active_status' => ActiveStatus::ACTIVE
             ])->first();
-        } else {
-            $user = self::where([
-                'role_type' => 'user',
-                'active_status' => ActiveStatus::ACTIVE
-            ])->where(function ($query) use ($username) {
-                return $query->where('email_address', $username)
-                    ->orWhere('phone_number', $username);
-            })->first();
-        }
 
+            return ($user && in_array(Role::ADMIN, $user->userRoles())) ? $user : false;
+        }
+        
+        $user = self::where(function ($query) use ($username) {
+            return $query->where([
+                'email_address' => $username,
+                'active_status' => ActiveStatus::ACTIVE
+            ])->orWhere('phone_number', $username);
+        })->first();
+        
         if ($user && Hash::check($password, $user->password)) {
             $user->token_expires_at = ApiUtility::next_one_month();
             $user->save();
@@ -112,6 +109,14 @@ class User extends Authenticable
         }
 
         return false;
+    }
+
+    public function userRoles()
+    {
+        return RoleToUser::where([
+            'user_id' => $this->id,
+            'active_status' => ActiveStatus::ACTIVE
+        ])->pluck('role_id')->toArray();
     }
 
     public function getLocationAttribute()
@@ -150,9 +155,11 @@ class User extends Authenticable
             return (object) VaccinationRequest::resource($vaccination);
         });
 
+        $user_type = UserToNatalType::USER_TYPE[$user->type ?? $user->natalType->type];
+        
         return [
-            'id' => $user->id,
-            'type' => self::USER_TYPE[$user->type],
+            'id' => $user->user_id,
+            'type' => $user_type,
             'full_name' => $user->full_name,
             'email_address' => $user->email_address,
             'phone_number' => $user->phone_number,

@@ -25,7 +25,6 @@ class CheckUserLogin
         if ($session) {
             $user = User::where([
                 'id' => $session->id,
-                'role_type' => 'user',
                 'active_status' => ActiveStatus::ACTIVE
             ])->whereDate('token_expires_at', '>=', $now)->first();
             

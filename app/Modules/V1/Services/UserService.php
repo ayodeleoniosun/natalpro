@@ -5,43 +5,51 @@ namespace App\Modules\V1\Services;
 use App\Modules\ApiUtility;
 use App\Modules\V1\Models\ActiveStatus;
 use App\Modules\V1\Models\User;
+use App\Modules\V1\Models\UserToNatalType;
 use App\Modules\V1\Repositories\UserRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserService implements UserRepository
 {
     public function users(string $type = null)
     {
-        if (in_array($type, [User::USER_TYPES])) {
-            $users = User::where([
-                'type' => $type,
-                'role_type' => 'user',
-                'active_status' => ActiveStatus::ACTIVE
-            ])->orderBy('id', 'DESC')->get();
-        } else {
-            $users = User::where([
-                'role_type' => 'user',
-                'active_status' => ActiveStatus::ACTIVE
-            ])->orderBy('id', 'DESC')->get();
-        }
+        $natal_type = ($type && in_array($type, UserToNatalType::USER_TYPES)) ? (array) $type : UserToNatalType::USER_TYPES;
+
+        $users = User::where('user.active_status', ActiveStatus::ACTIVE)
+        ->join('user_to_natal_type', function ($join) use ($natal_type) {
+            $join->on('user.id', '=', 'user_to_natal_type.user_id')
+            ->whereIn('type', $natal_type);
+        })->orderBy('user.id', 'DESC')->get();
 
         return $users->map(function ($user) {
             return (object) User::resource($user);
         });
     }
 
-    public function signUp(array $data)
+    public function signUp(array $data, string $user_type = null)
     {
-        $user = new User();
-        $user->first_name = strtolower($data['first_name']);
-        $user->last_name = strtolower($data['last_name']);
-        $user->phone_number = ApiUtility::phoneNumberToDBFormat($data['phone_number']);
-        $user->email_address = strtolower($data['email_address']);
-        $user->is_email_generated = $data['is_email_generated'];
-        $user->bearer_token = ApiUtility::generate_bearer_token();
-        $user->token_expires_at = ApiUtility::next_one_month();
-        $user->password = bcrypt($data['password']);
-        $user->save();
+        DB::beginTransaction();
+
+        $user = User::create([
+            'first_name' => strtolower($data['first_name']),
+            'last_name' => strtolower($data['last_name']),
+            'phone_number' => ApiUtility::phoneNumberToDBFormat($data['phone_number']),
+            'email_address' => strtolower($data['email_address']),
+            'is_email_generated' => $data['is_email_generated'],
+            'password' => bcrypt($data['password']),
+            'bearer_token' => ApiUtility::generate_bearer_token(),
+            'token_expires_at' => ApiUtility::next_one_month(),
+        ]);
+
+        if ($user_type && in_array($user_type, UserToNatalType::USER_TYPES)) {
+            UserToNatalType::create([
+                'type' => $user_type,
+                'user_id' => $user->id
+            ]);
+        }
+
+        DB::commit();
 
         return $user;
     }
@@ -69,7 +77,7 @@ class UserService implements UserRepository
     public function profile(int $id)
     {
         $user = User::find($id);
-
+        
         if (!$user) {
             return [
                 'status' => 'error',

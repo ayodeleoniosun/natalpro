@@ -31,11 +31,6 @@ class AdminService implements AdminRepository
 
     public function signIn(array $data)
     {
-        Cache::tags(['users'])->put('John', 'Doe');
-
-        $users = Cache::tags(['users'])->get('John');
-        dd($users);
-
         $user = User::validateUserCredentials($data['username'], $data['password'], true);
         
         if (!$user) {

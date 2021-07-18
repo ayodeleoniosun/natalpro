@@ -52,7 +52,7 @@
 
                     <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-user-circle"></i><span class="hide-menu">Users </span></a>
                         <ul aria-expanded="false" class="collapse">
-                            <li><a href="{{ route('admin.users.type', ['type' => 'nursing_mothers']) }}">Nursing Mothers</a></li>
+                            <li><a href="{{ route('admin.users.type', ['type' => 'nursing_mother']) }}">Nursing Mothers</a></li>
                         </ul>
                     </li>
 

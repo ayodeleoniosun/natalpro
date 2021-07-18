@@ -13,6 +13,7 @@ use App\Modules\V1\Models\PaymentStatus;
 use App\Modules\V1\Models\PaymentType;
 use App\Modules\V1\Models\Setting;
 use App\Modules\V1\Models\User;
+use App\Modules\V1\Models\UserToNatalType;
 use App\Modules\V1\Models\VaccinationCycle;
 use App\Modules\V1\Models\VaccinationRequest;
 use App\Modules\V1\Models\VaccinationSmsSample;
@@ -103,13 +104,13 @@ class VaccinationService implements VaccinationRepository
             DB::beginTransaction();
 
             $user = app(UserService::class)->signUp([
-                'first_name' => strtolower($data['child']),
-                'last_name' => strtolower($data['mother']),
+                'first_name' => $data['child'],
+                'last_name' => $data['mother'],
                 'phone_number' => $data['phone_number'],
                 'email_address' => $email_address,
                 'password' => ApiUtility::phoneNumberToDBFormat($data['phone_number']),
                 'is_email_generated' => $is_email_generated
-            ]);
+            ], UserToNatalType::NURSING_MOTHER);
         
             $reference_code = ApiUtility::generateTransactionReference();
             $vaccination_amount = Setting::where('id', 1)->value('vaccination_amount');
