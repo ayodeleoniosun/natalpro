@@ -20,7 +20,15 @@ class User extends Authenticable
         'token_expires_at'
     ];
 
-    protected $fillable = ['first_name', 'last_name', 'email_address', 'phone_number', 'password'];
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email_address',
+        'phone_number',
+        'password',
+        'bearer_token',
+        'token_expires_at'
+    ];
 
     public const USER_TYPES = ['nursing_mother', 'pregnant_women', 'healthcare_professional'];
 
@@ -29,6 +37,8 @@ class User extends Authenticable
         'pregnant_women' => 'Pregnant Women',
         'healthcare_professional' => 'Healthcare Professional'
     ];
+
+    const SUPER_ADMIN = 1;
 
     public function getFullNameAttribute()
     {

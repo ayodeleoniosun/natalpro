@@ -16,12 +16,10 @@ class CreateRoleToUserTable extends Migration
         Schema::create('role_to_user', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('role_id');
-            $table->unsignedInteger('user_id');
             $table->timestamps();
             $table->unsignedInteger('active_status')->default(1);
 
             $table->foreign('role_id')->references('id')->on('role');
-            $table->foreign('user_id')->references('id')->on('user');
             $table->foreign('active_status')->references('id')->on('active_status');
         });
     }

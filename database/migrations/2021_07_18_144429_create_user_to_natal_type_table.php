@@ -1,11 +1,10 @@
 <?php
 
-use App\Modules\V1\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoleTable extends Migration
+class CreateUserToNatalTypeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,19 +13,16 @@ class CreateRoleTable extends Migration
      */
     public function up()
     {
-        Schema::create('role', function (Blueprint $table) {
+        Schema::create('user_to_natal_type', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->enum('type', ['pregnant_women', 'nursing_mother', 'health_care_professional'])->default('nursing_mother');
+            $table->unsignedInteger('user_id');
             $table->timestamps();
             $table->unsignedInteger('active_status')->default(1);
+
+            $table->foreign('user_id')->references('id')->on('user');
             $table->foreign('active_status')->references('id')->on('active_status');
         });
-
-        $roles = ['admin'];
-        
-        foreach ($roles as $role) {
-            Role::create(['name' => $role]);
-        }
     }
 
     /**
@@ -36,6 +32,6 @@ class CreateRoleTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role');
+        Schema::dropIfExists('user_to_natal_type');
     }
 }
