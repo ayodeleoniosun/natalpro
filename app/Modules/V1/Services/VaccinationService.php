@@ -89,13 +89,13 @@ class VaccinationService implements VaccinationRepository
             ];
         }
         
-        $user = User::getUserByEmail($email_address);
+        $user = User::getUserByPhoneNumber($data['phone_number']);
         
         if ($user) {
             return [
                 'status' => 'error',
                 'label' => 'danger',
-                'message' => 'User with this email address exist. Kindly use a different email address'
+                'message' => 'User with this phone number exist. Kindly use a different phone number'
             ];
         }
 

@@ -70,6 +70,12 @@ class User extends Authenticable
         return self::where('email_address', $email)->first();
     }
 
+    public static function getUserByPhoneNumber($phone)
+    {
+        $phone = ApiUtility::phoneNumberToDBFormat($phone);
+        return self::where('phone_number', $phone)->first();
+    }
+
     public static function validateUserCredentials($username, $password, $admin = false)
     {
         if ($admin) {
