@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('vaccination:reminder')->everyFourMinutes();
+        $schedule->command('vaccination:reminder')->everyFiveMinutes();
     }
 
     /**
