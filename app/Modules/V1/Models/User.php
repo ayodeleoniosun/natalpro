@@ -91,7 +91,14 @@ class User extends Authenticable
                 'active_status' => ActiveStatus::ACTIVE
             ])->first();
 
-            return ($user && in_array(Role::ADMIN, $user->userRoles())) ? $user : false;
+            if ($user && in_array(Role::ADMIN, $user->userRoles()) && Hash::check($password, $user->password)) {
+                $user->token_expires_at = ApiUtility::next_one_month();
+                $user->save();
+
+                return $user;
+            }
+
+            return false;
         }
         
         $user = self::where(function ($query) use ($username) {
