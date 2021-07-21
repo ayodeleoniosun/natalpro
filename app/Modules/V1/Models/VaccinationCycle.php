@@ -33,6 +33,9 @@ class VaccinationCycle extends Model
         VaccinationInterval::TWO_YEARS => '2 years',
     ];
 
+    const WEEK_BEFORE = 'week_before';
+    const DAY_BEFORE = 'day_before';
+
     public function vaccinationRequest()
     {
         return $this->belongsTo(VaccinationRequest::class, 'vaccination_request_id');

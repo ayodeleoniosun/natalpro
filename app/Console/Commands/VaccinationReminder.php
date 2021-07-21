@@ -60,42 +60,13 @@ class VaccinationReminder extends Command
         })->join('user', function ($join) {
             $join->on('vaccination_request.user_id', '=', 'user.id')
             ->where('user.active_status', ActiveStatus::ACTIVE);
-        })->select($this->relatedColumns())
+        })->select(['user.phone_number', 'vaccination_cycle.id'])
         ->chunk(100, function ($vaccination_cycles) use ($duration) {
             foreach ($vaccination_cycles as $cycle) {
-                $this->notificationBody($cycle, $duration);
+                Log::info('Sending '.$duration.' vaccination reminder to '.$cycle->mother.' for interval '.$cycle->interval);
+                SendVaccinationReminder::dispatch($cycle, $duration);
+                Log::info('Done sending '.$duration.' vaccination reminder to '.$cycle->mother.' for interval '.$cycle->interval);
             }
         });
-    }
-
-    private function relatedColumns()
-    {
-        return [
-            'user.phone_number',
-            'vaccination_cycle.interval',
-            'vaccination_cycle.vaccination_date',
-            'vaccination_cycle.vaccination_request_id',
-            'vaccination_request.gender',
-            'vaccination_request.mother',
-            'vaccination_request.language'
-        ];
-    }
-
-    private function notificationBody($cycle, $duration)
-    {
-        Log::info('Sending '.$duration.' vaccination reminder to '.$cycle->mother.' for interval '.$cycle->interval);
-        
-        SendVaccinationReminder::dispatch(
-            $cycle->phone_number,
-            $cycle->interval,
-            $cycle->vaccination_date,
-            $cycle->vaccination_request_id,
-            $cycle->gender,
-            $cycle->mother,
-            $cycle->language,
-            $duration
-        );
-
-        Log::info('Done sending '.$duration.' vaccination reminder to '.$cycle->mother.' for interval '.$cycle->interval);
     }
 }
