@@ -26,7 +26,7 @@ class TestingCommand extends Command
      *
      * @var string
      */
-    protected $description = 'This command is a testing';
+    protected $description = 'Thiss command is a testing';
 
     /**
      * Create a new command instance.
