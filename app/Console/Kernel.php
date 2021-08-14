@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\VaccinationReminder::class,
+        Commands\TestingCommand::class,
         Commands\TestCommand::class
     ];
 
@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('vaccination:reminder')->dailyAt('14:00');
+        $schedule->command('command:testing')->everyMinute();
         $schedule->command('command:test')->everyMinute();
     }
 
