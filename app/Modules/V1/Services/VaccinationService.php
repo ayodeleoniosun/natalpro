@@ -161,7 +161,7 @@ class VaccinationService implements VaccinationRepository
         }
     }
 
-    public function callback(int $transaction_id, string $reference_id)
+    public function callback(int $transaction_id)
     {
         $transaction = app(Flutterwave::class)->verify($transaction_id);
         

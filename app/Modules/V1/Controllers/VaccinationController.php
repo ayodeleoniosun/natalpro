@@ -69,7 +69,6 @@ class VaccinationController extends Controller
             $body,
             [
                 'transaction_id' => 'required|string',
-                'tx_ref' => 'required|string',
             ]
         );
 
@@ -78,9 +77,7 @@ class VaccinationController extends Controller
         }
 
         $transaction_id = $this->request->input('transaction_id');
-        $reference_id = $this->request->input('tx_ref');
-
-        $response = $this->vaccinationRepository->callback($transaction_id, $reference_id);
+        $response = $this->vaccinationRepository->callback($transaction_id);
         
         return redirect()->route('vaccination.add')->with('alert-'.$response['label'], $response['message']);
     }

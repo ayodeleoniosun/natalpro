@@ -8,7 +8,7 @@ interface VaccinationRepository
 
     public function show(array $data);
 
-    public function callback(int $transaction_id, string $reference_id);
+    public function callback(int $transaction_id);
 
     public function smsSamples();
 
