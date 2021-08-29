@@ -16,8 +16,7 @@ class VaccinationCycle extends Model
         'vaccination_request_id',
         'vaccination_date',
         'interval',
-        'week_before',
-        'day_before'
+        'reminder_date'
     ];
 
     public const VACCINATION_CYCLES = [
@@ -32,9 +31,6 @@ class VaccinationCycle extends Model
         VaccinationInterval::EIGHTEEN_MONTHS => '18 months',
         VaccinationInterval::TWO_YEARS => '2 years',
     ];
-
-    const WEEK_BEFORE = 'week_before';
-    const DAY_BEFORE = 'day_before';
 
     public function vaccinationRequest()
     {

@@ -82,8 +82,7 @@ class VaccinationRequest extends Model
         return $cycles->map(function ($cycle) {
             $cycle->interval = VaccinationCycle::VACCINATION_CYCLES[$cycle->interval];
             $cycle->vaccination_date = Carbon::parse($cycle->vaccination_date)->format('F jS, Y');
-            $cycle->week_before = Carbon::parse($cycle->week_before)->format('F jS, Y');
-            $cycle->day_before = Carbon::parse($cycle->day_before)->format('F jS, Y');
+            $cycle->reminder_date = Carbon::parse($cycle->reminder_date)->format('F jS, Y');
             $cycle->active_status = ActiveStatus::symbols($cycle->active_status);
             return $cycle;
         });
@@ -92,8 +91,6 @@ class VaccinationRequest extends Model
     public static function generateCycles($interval, $vaccination_request)
     {
         $vaccination_date = $vaccination_request->dob;
-        $week_before = null;
-        $day_before = null;
         
         switch ($interval) {
             case VaccinationInterval::SIX_WEEKS:
@@ -137,15 +134,13 @@ class VaccinationRequest extends Model
 
         }
 
-        $week_before = Carbon::parse($vaccination_date)->subWeek()->toDateString();
-        $day_before = Carbon::parse($vaccination_date)->subDay()->toDateString();
-
+        $reminder_date = Carbon::parse($vaccination_date)->startOfWeek(Carbon::SUNDAY)->toDateString();
+        
         return [
             'vaccination_request_id' => $vaccination_request->id,
             'interval' => $interval,
             'vaccination_date' => $vaccination_date,
-            'week_before' => $week_before,
-            'day_before' => $day_before
+            'reminder_date' => $reminder_date,
         ];
     }
 

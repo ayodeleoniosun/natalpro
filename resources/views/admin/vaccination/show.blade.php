@@ -30,8 +30,8 @@
                                         <th>S/N</th>
                                         <th>Interval</th>
                                         <th>Vaccination Date</th>
-                                        <th>Week Reminder Date</th>
-                                        <th>Day Reminder Date</th>
+                                        <th>Reminder Date</th>
+                                        <th>SMS Status</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -42,8 +42,14 @@
                                             <td>{{ $key += 1 }}</td>
                                             <td>{{ $cycle->interval }}</td>
                                             <td>{{ $cycle->vaccination_date }}</td>
-                                            <td>{{ $cycle->week_before }}</td>
-                                            <td>{{ $cycle->day_before }}</td>
+                                            <td>{{ $cycle->reminder_date }}</td>
+                                            <td>
+                                                @if($cycle->reminder_sms_status)
+                                                    <span class="text-success"> Sent </span>
+                                                @else
+                                                    <span class="text-info"> Not sent </span>
+                                                @endif
+                                            </td>
                                             <td><span class="{{ $cycle->active_status['color'] }}"> {{ $cycle->active_status['label'] }} </span> </td>
                                         </tr>
                                     @endforeach
