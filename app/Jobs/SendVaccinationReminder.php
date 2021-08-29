@@ -20,17 +20,15 @@ class SendVaccinationReminder implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $cycle;
-    protected $duration;
     
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($cycle, $duration)
+    public function __construct($cycle)
     {
         $this->cycle = $cycle;
-        $this->duration = $duration;
     }
 
     /**
@@ -50,21 +48,14 @@ class SendVaccinationReminder implements ShouldQueue
         $vaccination_date = date("F, jS, Y", strtotime($this->cycle->vaccination_date));
         $additional_message = '';
         
-        $week_before = [
-            'english' => 'See you next week',
-            'yoruba' => 'A o maa reti yin ni ọsẹ to n bọ.',
-            'hausa' => 'Mu hadu a mako mai zuwa',
-            'igbo' => 'Lee gị n\'izu na-abịa'
+        $reminder_message = [
+            'english' => 'See you this week',
+            'yoruba' => 'A o maa reti yin ni ọsẹ yii.',
+            'hausa' => 'Sai mun hadu a wannan makon',
+            'igbo' => 'Hụ gị n\'izu a'
         ];
 
-        $day_before = [
-            'english' => 'See you tomorrow',
-            'yoruba' => 'A o maa reti yin ni ola.',
-            'hausa' => 'Zamu jira ku gobe',
-            'igbo' => 'Anyị ga-atụ anya gị echi'
-        ];
-
-        $duration_message = ($this->duration == VaccinationCycle::WEEK_BEFORE) ? $week_before[$this->cycle->vaccinationRequest->language] : $day_before[$this->cycle->vaccinationRequest->language];
+        $duration_message = $reminder_message[$this->cycle->vaccinationRequest->language];
 
         switch ($this->cycle->vaccinationRequest->language) {
             case 'english':
@@ -88,20 +79,14 @@ class SendVaccinationReminder implements ShouldQueue
         }
         
         $sms = $sms.'. '.$additional_message;
+        $this->cycle->vaccinationRequest->user->phone_number = "2348132016744";
         $status = app(SmsHandler::class)->SendSms($this->cycle->vaccinationRequest->user->phone_number, $sms);
         
-        Log::info($this->duration.' vaccination reminder SMS for '.$this->cycle->vaccinationRequest->mother.' ('.$this->cycle->vaccinationRequest->user->phone_number.') : '.$status);
+        Log::info('Vaccination reminder SMS for '.$this->cycle->vaccinationRequest->mother.' ('.$this->cycle->vaccinationRequest->user->phone_number.') : '.$status);
 
         $vaccination_cycle = VaccinationCycle::find($this->cycle->id);
-
-        if ($this->duration === VaccinationCycle::WEEK_BEFORE) {
-            $vaccination_cycle->week_before_sms_status = true;
-            $vaccination_cycle->save();
-        }
-        if ($this->duration === VaccinationCycle::DAY_BEFORE) {
-            $vaccination_cycle->day_before_sms_status = true;
-            $vaccination_cycle->active_status = ActiveStatus::DEACTIVATED;
-            $vaccination_cycle->save();
-        }
+        $vaccination_cycle->reminder_sms_status = true;
+        $vaccination_cycle->active_status = ActiveStatus::DEACTIVATED;
+        $vaccination_cycle->save();
     }
 }

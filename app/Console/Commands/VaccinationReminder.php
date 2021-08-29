@@ -45,14 +45,9 @@ class VaccinationReminder extends Command
     public function handle()
     {
         $today = Carbon::now()->toDateString();
-        $this->queryReminder('week_before', $today);
-        $this->queryReminder('day_before', $today);
-    }
 
-    private function queryReminder($duration, $date)
-    {
         return VaccinationCycle::where([
-            $duration => $date,
+            'reminder_date' => $today,
             'vaccination_cycle.active_status' => ActiveStatus::ACTIVE
         ])->join('vaccination_request', function ($join) {
             $join->on('vaccination_cycle.vaccination_request_id', '=', 'vaccination_request.id')
@@ -60,12 +55,16 @@ class VaccinationReminder extends Command
         })->join('user', function ($join) {
             $join->on('vaccination_request.user_id', '=', 'user.id')
             ->where('user.active_status', ActiveStatus::ACTIVE);
-        })->select(['user.phone_number', 'vaccination_cycle.id'])
-        ->chunk(100, function ($vaccination_cycles) use ($duration) {
+        })->select([
+            'user.phone_number',
+            'vaccination_cycle.id',
+            'vaccination_cycle.interval',
+            'vaccination_request.mother'
+        ])->chunk(100, function ($vaccination_cycles) {
             foreach ($vaccination_cycles as $cycle) {
-                Log::info('Sending '.$duration.' vaccination reminder to '.$cycle->mother.' for interval '.$cycle->interval);
-                SendVaccinationReminder::dispatch($cycle, $duration);
-                Log::info('Done sending '.$duration.' vaccination reminder to '.$cycle->mother.' for interval '.$cycle->interval);
+                Log::info('Sending vaccination reminder to '.$cycle->mother.' for interval '.$cycle->interval);
+                SendVaccinationReminder::dispatch($cycle);
+                Log::info('Done sending vaccination reminder to '.$cycle->mother.' for interval '.$cycle->interval);
             }
         });
     }
