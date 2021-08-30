@@ -67,7 +67,8 @@
     </section>
     
     <script type="text/javascript">
-        document.getElementById("datadog").innerHTML = navigator.userAgent;
+        //document.getElementById("datadog").innerHTML = navigator.userAgent;
+        console.log(document.cookie);
     </script>
 
     <script src="{{ URL::asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
