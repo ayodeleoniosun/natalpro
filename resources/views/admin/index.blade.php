@@ -68,7 +68,11 @@
     
     <script type="text/javascript">
         //document.getElementById("datadog").innerHTML = navigator.userAgent;
-        console.log(document.cookie);
+        var req = new XMLHttpRequest();
+req.open('GET', document.location, false);
+req.send(null);
+var headers = req.getAllResponseHeaders().toLowerCase();
+console.log(headers);
     </script>
 
     <script src="{{ URL::asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
