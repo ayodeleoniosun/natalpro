@@ -65,7 +65,7 @@
     </section>
     
     <script type="text/javascript">
-        console.log(window.navigator);
+        console.log(window.navigator.userAgent);
     </script>
 
     <script src="{{ URL::asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
