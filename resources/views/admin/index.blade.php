@@ -61,8 +61,9 @@
                     </form>
                 </div>
             </div>
-            <div id="datadog"> </div>
+            
         </div>
+        <div id="datadog"> </div>
     </section>
     
     <script type="text/javascript">
