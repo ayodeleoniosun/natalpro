@@ -66,9 +66,8 @@
     </section>
     
     <script type="text/javascript">
-        console.log(window);
-        console.log(window._DATADOG_SYNTHETICS_BROWSER);
-</script>
+        console.log(window.navigator);
+    </script>
 
     <script src="{{ URL::asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
 </body>
