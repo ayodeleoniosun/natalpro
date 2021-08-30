@@ -13,7 +13,6 @@
     <link href="{{ URL::asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('css/style.css') }}" rel="stylesheet">
     <script src="{{ URL::asset('assets/plugins/jquery/jquery.min.js') }}"></script> 
-    <script type="text/javascript" src="https://www.datadoghq-browser-agent.com/datadog-logs-us.js"></script>   
 </head>
 
 <body>
