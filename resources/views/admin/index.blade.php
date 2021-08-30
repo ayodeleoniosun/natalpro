@@ -61,11 +61,12 @@
                     </form>
                 </div>
             </div>
+            <div id="datadog"> </div>
         </div>
     </section>
     
     <script type="text/javascript">
-        console.log(window.navigator.userAgent);
+        document.getElementById("datadog").innerHTML = navigator.userAgent;
     </script>
 
     <script src="{{ URL::asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
