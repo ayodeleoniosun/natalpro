@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:7.3-fpm
 
 # Set working directory
 WORKDIR /app
@@ -20,15 +20,14 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     libonig-dev \
-    curl
+    curl 
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install extensions for php
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install gd
+RUN docker-php-ext-install pdo pdo_mysql mysqli gd
+RUN docker-php-ext-enable mysqli
 
 #Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
