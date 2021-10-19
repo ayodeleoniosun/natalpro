@@ -226,8 +226,7 @@ class VaccinationService implements VaccinationRepository
             $welcome_message.="Phone number - ".$user->phone_number."\n";
             $welcome_message.="Password - ".$user->phone_number."\n";
             
-            $status = app(SmsHandler::class)->SendSms($user->phone_number, $welcome_message);
-            Log::info("Vaccination Welcome SMS to ".$user->phone_number." = ". $status);
+            app(SmsHandler::class)->SendSms($user->phone_number, $welcome_message);
             
             return [
                 'status' => 'success',
