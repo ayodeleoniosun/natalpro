@@ -65,12 +65,6 @@ class VaccinationService implements VaccinationRepository
 
     public function request(array $data)
     {
-        $welcome_message ="Your";
-        $welcome_message.="Phone number - 191091\n";
-        $welcome_message.="Password - 28928928\n";
-        
-        $status = app(SmsHandler::class)->SendSms(2348132016744, $welcome_message);
-        
         $is_email_generated = false;
 
         if (!isset($data['email_address']) || empty($data['email_address'])) {
