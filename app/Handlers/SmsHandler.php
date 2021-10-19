@@ -2,31 +2,67 @@
 
 namespace App\Handlers;
 
-use Twilio\Rest\Client;
+use App\Modules\ApiUtility;
+use GuzzleHttp\Client;
 
 class SmsHandler
 {
-    protected $sid;
-    protected $msg_id;
-    protected $auth_token;
-    protected $sender_name;
+    protected $username;
+    protected $apiKey;
+    protected $senderName;
+    protected $client;
+    protected $baseUrl;
 
-    public function __construct()
+    public function __construct(Client $client)
     {
-        $this->sid = env('TWILIO_ACCOUNT_SID');
-        $this->msg_id = env('TWILIO_MSG_ID');
-        $this->auth_token = env('TWILIO_AUTH_TOKEN');
-        $this->sender_name = env('SMS_SENDER_NAME');
+        $this->username = env('SMS_USERNAME');
+        $this->apiKey = env('SMS_API_KEY');
+        $this->senderName = env('SMS_SENDER_NAME');
+        $this->client = $client;
+        $this->baseUrl = "http://api.ebulksms.com:8080/sendsms.json";
     }
+    
     public function SendSms($recipient, $message)
     {
-        $twilio = new Client($this->sid, $this->auth_token);
+        $url = "http://api.ebulksms.com:8080/sendsms?username=".$this->username."&apikey=".$this->apiKey."&sender=".$this->senderName."&messagetext=".$message."&flash=0&recipients=".$recipient;
+        
+        $response = $this->client->get($url);
 
-        $message = $twilio->messages->create($recipient, [
-            "from" => $this->sender_name,
-            "body" => $message
-        ]);
-            
-        return !$message->errorCode ? 'success' : 'failed';
+        return $response;
+
+        // if (empty(env('SMS_API_KEY'))) {
+        //     return;
+        // }
+
+        // try {
+        //     $response = $this->client->post($this->baseUrl, [
+        //         'SMS' => [
+        //             'auth' => [
+        //                 'username' => $this->username,
+        //                 'apikey' => $this->apiKey,
+        //             ],
+        //             'message' => [
+        //                 'sender' => $this->senderName,
+        //                 'messagetext' => $message,
+        //                 "flash" => 0,
+        //             ],
+        //             'recipients' => [
+        //                 "gsm" => [
+        //                     'msidn' => $recipient,
+        //                     'msgid' => uniqid(),
+        //                 ],
+        //             ],
+        //             "dndsender" => 1
+        //         ],
+
+        //         'headers' => [
+        //             'Content-Type' => 'application/json'
+        //         ]
+        //     ]);
+
+        //     return json_decode($response->getBody()->getContents());
+        // } catch (\Exception $e) {
+        //     return $e;
+        // }
     }
 }
