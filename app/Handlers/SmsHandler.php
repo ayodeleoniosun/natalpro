@@ -24,7 +24,7 @@ class SmsHandler
     
     public function SendSms($recipient, $message)
     {
-        $url = "http://api.ebulksms.com:8080/sendsms?username=".$this->username."&apikey=".$this->apiKey."&sender=".$this->senderName."&messagetext=".$message."&flash=0&recipients=".$recipient;
+        $url = "http://api.ebulksms.com:80/sendsms?username=".$this->username."&apikey=".$this->apiKey."&sender=".$this->senderName."&messagetext=".$message."&flash=0&recipients=".$recipient;
         
         $response = $this->client->get($url);
 
